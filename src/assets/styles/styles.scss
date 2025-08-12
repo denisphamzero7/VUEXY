@@ -1,1 +1,23 @@
 // Write your overrides
+// @forward "../../@core/scss/template/libs/vuetify/variables" with (
+//   $color-pack: false
+// );
+// @forward "@core/scss/template/variables" with (
+//   $navbar-high-emphasis-text: true
+// );
+// /* stylelint-disable-next-line scss/double-slash-comment-empty-line-before */
+// // Import mixins
+// @use '@layouts/styles/mixins';
+
+// .some-icon {
+//   @include mixins.icon-size(1.25rem);
+// }
+
+// /* Output
+
+// .some-icon {
+//   height: 1.25rem;
+//   width: 1.25rem;
+// }
+
+// */

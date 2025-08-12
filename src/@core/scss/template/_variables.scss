@@ -1,4 +1,5 @@
 @forward "@core/scss/base/variables" with (
+  // $navbar-high-emphasis-text: true,
   $default-layout-with-vertical-nav-navbar-footer-roundness: 6px !default,
 
   $vertical-nav-navbar-style: "floating" !default, // options: elevated, floating
