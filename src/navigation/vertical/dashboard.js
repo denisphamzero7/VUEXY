@@ -4,9 +4,15 @@ export default [
     icon: { icon: 'tabler-smart-home' },
     children: [
       {
+        title: 'About',
+        to: 'page-about',
+      }
+      ,
+      {
         title: 'Analytics',
         to: 'dashboards-analytics',
       },
+     
       {
         title: 'CRM',
         to: 'dashboards-crm',
