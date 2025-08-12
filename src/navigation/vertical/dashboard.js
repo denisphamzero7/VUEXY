@@ -6,6 +6,10 @@ export default [
       {
         title: 'About',
         to: 'page-about',
+      },
+      {
+        title: 'Users',
+        to: 'page-users',
       }
       ,
       {

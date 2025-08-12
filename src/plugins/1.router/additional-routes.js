@@ -73,4 +73,14 @@ export const routes = [
     name: 'page-about',
     component: ()=> import('@/pages/about.vue'),
   },
+  {
+    path: '/user/list',
+    name: 'page-users',
+    component: ()=> import('@/pages/users/list.vue'),
+  },
+  {
+    path: '/signin',
+    name: 'page-signin',
+    component: ()=> import('@/pages/signin.vue'),
+  },
 ]
