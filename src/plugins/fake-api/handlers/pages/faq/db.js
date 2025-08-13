@@ -3,14 +3,14 @@ export const db = {
     {
       faqTitle: 'Payment',
       faqIcon: 'tabler-credit-card',
-      faqSubtitle: 'Get help with payment',
+      faqSubtitle: 'Nhận trợ giúp về thanh toán',
       faqs: [
         {
-          question: 'When is payment taken for my order?',
-          answer: 'Payment is taken during the checkout process when you pay for your order. The order number that appears on the confirmation screen indicates payment has been successfully processed.',
+          question: 'Khi nào thì đơn hàng của tôi được thanh toán?',
+          answer: 'Thanh toán sẽ được thực hiện trong quá trình thanh toán khi bạn thanh toán cho đơn hàng. Mã đơn hàng hiển thị trên màn hình xác nhận cho biết thanh toán đã được xử lý thành công.',
         },
         {
-          question: 'How do I pay for my order?',
+          question: 'Tôi phải thanh toán đơn hàng của mình như thế nào?',
           answer: 'We accept Visa®, MasterCard®, American Express®, and PayPal®. Our servers encrypt all information submitted to them, so you can be confident that your credit card information will be kept safe and secure.',
         },
         {

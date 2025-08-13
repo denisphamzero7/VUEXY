@@ -5,7 +5,7 @@ import Connection from './Connection.vue'
 import ProjectList from './ProjectList.vue'
 import Teams from './Teams.vue'
 
-const router = useRoute('pages-user-profile-tab')
+const router = useRoute('pages-userprofile-tab')
 const profileTabData = ref()
 
 const fetchAboutData = async () => {

@@ -24,10 +24,21 @@ export const redirects = [
     name: 'pages-user-profile',
     redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
   },
+  
   {
     path: '/pages/account-settings',
     name: 'pages-account-settings',
     redirect: () => ({ name: 'pages-account-settings-tab', params: { tab: 'account' } }),
+  },
+  {
+    path: '/pages/account-new-settings',
+    name: 'pages-account-new-settings',
+    redirect: () => ({ name: 'pages-account-new-settings-tab', params: { tab: 'newaccount' } }),
+  },
+  {
+    path: '/pages/myprofile',
+    name: 'pages-my-profile',
+    redirect: () => ({ name: 'pages-my-profile-tab', params: { tab: 'profile' } }),
   },
 ]
 export const routes = [
@@ -83,4 +94,6 @@ export const routes = [
     name: 'page-signin',
     component: ()=> import('@/pages/signin.vue'),
   },
+   
+ 
 ]

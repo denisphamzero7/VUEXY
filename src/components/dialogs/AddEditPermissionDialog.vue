@@ -46,10 +46,10 @@ watch(() => props, () => {
       <VCardText>
         <!-- 👉 Title -->
         <h4 class="text-h4 text-center mb-2">
-          {{ props.permissionName ? 'Edit' : 'Add' }} Permission
+          {{ props.permissionName ? 'Edit' : 'Add' }} Quyền
         </h4>
         <p class="text-body-1 text-center mb-6">
-          {{ props.permissionName ? 'Edit' : 'Add' }}  permission as per your requirements.
+          {{ props.permissionName ? 'Edit' : 'Add' }} quyền theo yêu cầu của bạn.
         </p>
 
         <!-- 👉 Form -->
@@ -61,7 +61,7 @@ watch(() => props, () => {
             class="mb-6"
           >
             <template #text>
-              By {{ props.permissionName ? 'editing' : 'adding' }} the permission name, you might break the system permissions functionality.
+              By {{ props.permissionName ? 'editing' : 'adding' }} tên quyền, bạn có thể phá vỡ chức năng cấp quyền của hệ thống.
             </template>
           </VAlert>
 
@@ -77,7 +77,7 @@ watch(() => props, () => {
             </VBtn>
           </div>
 
-          <VCheckbox label="Set as core permission" />
+          <VCheckbox label="Đặt làm quyền cốt lõi" />
         </VForm>
       </VCardText>
     </VCard>

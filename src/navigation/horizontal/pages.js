@@ -9,11 +9,18 @@ export default [
         to: { name: 'pages-user-profile-tab', params: { tab: 'profile' } },
       },
       {
+        title: 'My Profile',
+        icon: { icon: 'tabler:user' },
+        to: { name: 'pages-my-profile-tab', params: { tab: 'myprofile' } },
+      },
+
+      {
         title: 'Account Settings',
         icon: { icon: 'tabler-settings' },
         to: { name: 'pages-account-settings-tab', params: { tab: 'account' } },
       },
       { title: 'FAQ', icon: { icon: 'tabler-help' }, to: 'pages-faq' },
+      { title: 'FAQ1', icon: { icon: 'tabler-help' }, to: 'pages-faqnew' },
       { title: 'Pricing', icon: { icon: 'tabler-diamond' }, to: 'pages-pricing' },
       {
         title: 'Misc',

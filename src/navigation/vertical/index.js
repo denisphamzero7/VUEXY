@@ -4,6 +4,6 @@ import dashboard from './dashboard'
 import forms from './forms'
 import others from './others'
 import uiElements from './ui-elements'
+import myhau from './myhau'
 
-
-export default [...dashboard, ...appsAndPages, ...uiElements, ...forms, ...charts, ...others]
+export default [...dashboard, ...myhau, ...appsAndPages, ...uiElements, ...forms, ...charts, ...others]

@@ -16,10 +16,15 @@ import { handlerAuth } from '@db/auth/index'
 import { handlerDashboard } from '@db/dashboard/index'
 import { handlerPagesDatatable } from '@db/pages/datatable/index'
 import { handlerPagesFaq } from '@db/pages/faq/index'
+import { handlerPagesFaqnew } from '@db/pages/faq1/index'
 import { handlerPagesHelpCenter } from '@db/pages/help-center/index'
 import { handlerPagesProfile } from '@db/pages/profile/index'
+import { handlerPagesMyProfile } from '@db/pages/myprofile/index'
+import { handlerAppsNewUsers } from '@db/apps/newusers/index'
+import { handlerAppsNewPermission } from '@db/apps/newpermission/index'
+import { handlerNewDashboard } from '@db/newdashboard/index'
 
-const worker = setupWorker(...handlerAppsEcommerce, ...handlerAppsAcademy, ...handlerAppsInvoice, ...handlerAppsUsers, ...handlerAppsEmail, ...handlerAppsCalendar, ...handlerAppsChat, ...handlerAppsPermission, ...handlerPagesHelpCenter, ...handlerPagesProfile, ...handlerPagesFaq, ...handlerPagesDatatable, ...handlerAppBarSearch, ...handlerAppLogistics, ...handlerAuth, ...handlerAppsKanban, ...handlerDashboard)
+const worker = setupWorker(...handlerAppsEcommerce, ...handlerAppsAcademy, ...handlerAppsInvoice, ...handlerAppsUsers, ...handlerAppsEmail, ...handlerAppsCalendar, ...handlerAppsChat, ...handlerAppsPermission, ...handlerPagesHelpCenter, ...handlerPagesProfile, ...handlerPagesFaq, ...handlerPagesDatatable, ...handlerAppBarSearch, ...handlerAppLogistics, ...handlerAuth, ...handlerAppsKanban, ...handlerDashboard, ... handlerPagesFaqnew, ...handlerPagesMyProfile, ...handlerAppsNewUsers, ...handlerAppsNewPermission, ...handlerNewDashboard)
 export default function () {
   const workerUrl = `${import.meta.env.BASE_URL ?? '/'}mockServiceWorker.js`
 
