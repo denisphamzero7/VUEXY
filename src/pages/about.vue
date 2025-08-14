@@ -1,141 +1,571 @@
-/* stylelint-disable @stylistic/block-opening-brace-space-before */
-<template>
-  <VContainer>
-    <VCard class="mb-6">
-      <VCardTitle class="text-h4">
-        About Page
-      </VCardTitle>
-      <VCardText>
-        <p class="text-body-1">
-          This is about page
-        </p>
-        <p class="text-body-2">
-          Current theme: {{ $vuetify.theme.current.value }}
-        </p>
-      </VCardText>
-      <VCardActions>
-        <VBtn 
-          :color="$vuetify.theme.current.value === 'dark' ? 'primary' : 'secondary'"
-          @click="toggleTheme"
-        >
-          Toggle Theme
-        </VBtn>
-        <VBtn 
-          color="success" 
-          @click="setLightTheme"
-        >
-          Light Theme
-        </VBtn>
-        <VBtn 
-          color="info" 
-          @click="setDarkTheme"
-        >
-          Dark Theme
-        </VBtn>
-      </VCardActions>
-    </VCard>
-
-    <VRow>
-      <VCol
-        cols="12"
-        md="6"
-      >
-        <VCard>
-          <VCardTitle>Theme Information</VCardTitle>
-          <VCardText>
-            <p>Current theme: <strong>{{ $vuetify.theme.current.value }}</strong></p>
-            <p>Theme global: <strong>{{ $vuetify.theme.global.current.value }}</strong></p>
-          </VCardText>
-        </VCard>
-      </VCol>
-      <VCol
-        cols="12"
-        md="6"
-      >
-        <VCard>
-          <VCardTitle>Theme Colors</VCardTitle>
-          <VCardText>
-            <div class="d-flex flex-wrap gap-2">
-              <VChip 
-                v-for="color in ['primary', 'secondary', 'success', 'error', 'warning', 'info']" 
-                :key="color"
-                :color="color"
-                class="ma-1"
-              >
-                {{ color }}
-              </VChip>
-            </div>
-          </VCardText>
-        </VCard>
-      </VCol>
-      <VCol
-        cols="12"
-        md="6"
-      >
-        <VCard>
-          <VCardTitle>user</VCardTitle>
-          <VCardText>
-            <p>
-              <NuxtLink to="/users/1">
-                User 1
-              </NuxtLink>
-            </p>
-            <p>
-              <NuxtLink to="/users/2">
-                User 2
-              </NuxtLink>
-            </p>
-          </VCardText>
-        </VCard>
-      </VCol>
-    </VRow>
-  </VContainer>
-</template>
-
 <script setup>
-import { useApi } from '@/composables/useApi'
-import { useTheme } from 'vuetify'
-
-const theme = useTheme()
+import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import { useAbility } from '@/plugins/casl/composables/useAbility' 
 
 
-const toggleTheme = () => {
-  theme.global.name.value = theme.global.current.value === 'light' ? 'dark' : 'light'
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+  },
+})
+
+const ability = useAbility()
+const canCreateUser = computed(() => ability.can('create', 'User'))
+const canDeleteUser = computed(() => ability.can('delete', 'User')) 
+const canReadUser = computed(() => ability.can('read', 'User')) 
+
+// renamed for clarity
+const canUpdateUser = computed(() => ability.can('update', 'User'))
+
+// combined check so actions column is shown when any action is allowed
+const canAnyAction = computed(() => (
+  canReadUser.value || canUpdateUser.value || canDeleteUser.value
+))
+
+const searchQuery = ref('')
+const selectedRole = ref()
+const selectedPlan = ref()
+const selectedStatus = ref()
+
+// Data table options
+const itemsPerPage = ref(10)
+const page = ref(1)
+const sortBy = ref()
+const orderBy = ref()
+const selectedRows = ref([])
+
+const updateOptions = options => {
+  sortBy.value = options.sortBy[0]?.key
+  orderBy.value = options.sortBy[0]?.order
 }
 
-const setLightTheme = () => {
-  theme.global.name.value = 'light'
+// Headers
+const headers = [
+  {
+    title: 'Người dùng',
+    key: 'user',
+  },
+  {
+    title: 'Vai trò',
+    key: 'role',
+  },
+  {
+    title: 'Gói',
+    key: 'plan',
+  },
+  {
+    title: 'Thanh toán',
+    key: 'billing',
+  },
+  {
+    title: 'Trạng thái',
+    key: 'status',
+  },
+  {
+    title: 'Hành động',
+    key: 'actions',
+    sortable: false,
+  },
+]
+
+const {
+  data: usersData,
+  execute: fetchUsers,
+} = await useApi(createUrl('/apps/users', {
+  query: {
+    q: searchQuery,
+    status: selectedStatus,
+    plan: selectedPlan,
+    role: selectedRole,
+    itemsPerPage,
+    page,
+    sortBy,
+    orderBy,
+  },
+}))
+
+const users = computed(() => usersData.value.users)
+const totalUsers = computed(() => usersData.value.totalUsers)
+
+// 👉 search filters
+const roles = [
+  {
+    title: 'Quản trị',
+    value: 'admin',
+  },
+  {
+    title: 'Tác giả',
+    value: 'author',
+  },
+  {
+    title: 'Biên tập',
+    value: 'editor',
+  },
+  {
+    title: 'Người quản lý',
+    value: 'maintainer',
+  },
+  {
+    title: 'Người đăng ký',
+    value: 'subscriber',
+  },
+]
+
+const plans = [
+  {
+    title: 'Cơ bản',
+    value: 'basic',
+  },
+  {
+    title: 'Công ty',
+    value: 'company',
+  },
+  {
+    title: 'Doanh nghiệp',
+    value: 'enterprise',
+  },
+  {
+    title: 'Nhóm',
+    value: 'team',
+  },
+]
+
+const status = [
+  {
+    title: 'Đang chờ',
+    value: 'pending',
+  },
+  {
+    title: 'Hoạt động',
+    value: 'active',
+  },
+  {
+    title: 'Không hoạt động',
+    value: 'inactive',
+  },
+]
+
+const resolveUserRoleVariant = role => {
+  const roleLowerCase = role.toLowerCase()
+  if (roleLowerCase === 'subscriber')
+    return {
+      color: 'success',
+      icon: 'tabler-user',
+    }
+  if (roleLowerCase === 'author')
+    return {
+      color: 'error',
+      icon: 'tabler-device-desktop',
+    }
+  if (roleLowerCase === 'maintainer')
+    return {
+      color: 'info',
+      icon: 'tabler-chart-pie',
+    }
+  if (roleLowerCase === 'editor')
+    return {
+      color: 'warning',
+      icon: 'tabler-edit',
+    }
+  if (roleLowerCase === 'admin')
+    return {
+      color: 'primary',
+      icon: 'tabler-crown',
+    }
+  
+  return {
+    color: 'primary',
+    icon: 'tabler-user',
+  }
 }
 
-const setDarkTheme = () => {
-  theme.global.name.value = 'dark'
+const resolveUserStatusVariant = stat => {
+  const statLowerCase = stat.toLowerCase()
+  if (statLowerCase === 'pending')
+    return 'warning'
+  if (statLowerCase === 'active')
+    return 'success'
+  if (statLowerCase === 'inactive')
+    return 'secondary'
+  
+  return 'primary'
 }
+
+const isAddNewUserDrawerVisible = ref(false)
+
+const addNewUser = async userData => {
+  await $api('/apps/newusers', {
+    method: 'POST',
+    body: userData,
+  })
+
+  // Refetch User
+  fetchUsers()
+}
+
+const deleteUser = async id => {
+  // Optional: small confirm
+  if (!confirm('Bạn có chắc muốn xóa người dùng này?'))
+    return
+
+  await $api(`/apps/newusers/${ id }`, { method: 'DELETE' })
+
+  // Delete from selectedRows
+  const index = selectedRows.value.findIndex(row => row === id)
+  if (index !== -1)
+    selectedRows.value.splice(index, 1)
+
+  // Refetch User
+  fetchUsers()
+}
+
+const widgetData = ref([
+  {
+    title: 'Phiên',
+    value: '21,459',
+    change: 29,
+    desc: 'Tổng số người dùng',
+    icon: 'tabler-users',
+    iconColor: 'primary',
+  },
+  {
+    title: 'Người dùng trả phí',
+    value: '4,567',
+    change: 18,
+    desc: 'Phân tích tuần trước',
+    icon: 'tabler-user-plus',
+    iconColor: 'error',
+  },
+  {
+    title: 'Người dùng hoạt động',
+    value: '19,860',
+    change: -14,
+    desc: 'Phân tích tuần trước',
+    icon: 'tabler-user-check',
+    iconColor: 'success',
+  },
+  {
+    title: 'Người dùng chờ',
+    value: '237',
+    change: 42,
+    desc: 'Phân tích tuần trước',
+    icon: 'tabler-user-search',
+    iconColor: 'warning',
+  },
+])
 </script>
 
-<style lang="scss">
-/* stylelint-disable-next-line @stylistic/string-quotes */
-@use '@layouts/styles/mixins1';
+<template>
+  <section>
+    <!-- 👉 Widgets -->
+    <div class="d-flex mb-6">
+      <VRow>
+        <template
+          v-for="(data, id) in widgetData"
+          :key="id"
+        >
+          <VCol
+            cols="12"
+            md="3"
+            sm="6"
+          >
+            <VCard>
+              <VCardText>
+                <div class="d-flex justify-space-between">
+                  <div class="d-flex flex-column gap-y-1">
+                    <div class="text-body-1 text-high-emphasis">
+                      {{ data.title }}
+                    </div>
+                    <div class="d-flex gap-x-2 align-center">
+                      <h4 class="text-h4">
+                        {{ data.value }}
+                      </h4>
+                      <div
+                        class="text-base"
+                        :class="data.change > 0 ? 'text-success' : 'text-error'"
+                      >
+                        ({{ prefixWithPlus(data.change) }}%)
+                      </div>
+                    </div>
+                    <div class="text-sm">
+                      {{ data.desc }}
+                    </div>
+                  </div>
+                  <VAvatar
+                    :color="data.iconColor"
+                    variant="tonal"
+                    rounded
+                    size="42"
+                  >
+                    <VIcon
+                      :icon="data.icon"
+                      size="26"
+                    />
+                  </VAvatar>
+                </div>
+              </VCardText>
+            </VCard>
+          </VCol>
+        </template>
+      </VRow>
+    </div>
 
-// Custom theme-aware styles
-.v-card {
-  transition: all 0.3s ease;
+    <VCard class="mb-6">
+      <VCardItem class="pb-4">
+        <VCardTitle>Bộ lọc</VCardTitle>
+      </VCardItem>
 
-  &:hover {
-    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 10%);
-    transform: translateY(-2px);
-  }
-}
+      <VCardText>
+        <VRow>
+          <!-- 👉 Select Role -->
+          <VCol
+            cols="12"
+            sm="4"
+          >
+            <AppSelect
+              v-model="selectedRole"
+              placeholder="Chọn vai trò"
+              :items="roles"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+          <!-- 👉 Select Plan -->
+          <VCol
+            cols="12"
+            sm="4"
+          >
+            <AppSelect
+              v-model="selectedPlan"
+              placeholder="Chọn gói"
+              :items="plans"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+          <!-- 👉 Select Status -->
+          <VCol
+            cols="12"
+            sm="4"
+          >
+            <AppSelect
+              v-model="selectedStatus"
+              placeholder="Chọn trạng thái"
+              :items="status"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+        </VRow>
+      </VCardText>
 
-// Theme-specific customizations
-:root[data-theme="dark"] {
-  .v-card {
-    background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
-  }
-}
+      <VDivider />
 
-:root[data-theme="light"] {
-  .v-card {
-    background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
-  }
-}
-</style>
+      <VCardText class="d-flex flex-wrap gap-4">
+        <div class="me-3 d-flex gap-3">
+          <AppSelect
+            :model-value="itemsPerPage"
+            :items="[
+              { value: 10, title: '10' },
+              { value: 25, title: '25' },
+              { value: 50, title: '50' },
+              { value: 100, title: '100' },
+              { value: -1, title: 'Tất cả' },
+            ]"
+            style="inline-size: 6.25rem;"
+            @update:model-value="itemsPerPage = parseInt($event, 10)"
+          />
+        </div>
+        <VSpacer />
+
+        <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
+          <!-- 👉 Search  -->
+          <div style="inline-size: 15.625rem;">
+            <AppTextField
+              v-model="searchQuery"
+              placeholder="Tìm người dùng"
+            />
+          </div>
+
+          <!-- 👉 Export button -->
+          <VBtn
+            variant="tonal"
+            color="secondary"
+            prepend-icon="tabler-upload"
+          >
+            Xuất
+          </VBtn>
+
+          <!-- 👉 Add user button -->
+          <VBtn
+            v-if="canCreateUser"
+            prepend-icon="tabler-plus"
+            @click="isAddNewUserDrawerVisible = true"
+          >
+            Thêm người dùng mới
+          </VBtn>
+        </div>
+      </VCardText>
+
+      <VDivider />
+
+      <!-- SECTION datatable -->
+      <VDataTableServer
+        v-model:items-per-page="itemsPerPage"
+        v-model:model-value="selectedRows"
+        v-model:page="page"
+        :items="users"
+        item-value="id"
+        :items-length="totalUsers"
+        :headers="headers"
+        class="text-no-wrap"
+        show-select
+        @update:options="updateOptions"
+      >
+        <!-- User -->
+        <template
+          v-if="canAnyAction"
+          #item.user="{ item }"
+        >
+          <div class="d-flex align-center gap-x-4">
+            <VAvatar
+              size="34"
+              :variant="!item.avatar ? 'tonal' : undefined"
+              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
+            >
+              <VImg
+                v-if="item.avatar"
+                :src="item.avatar"
+              />
+              <span v-else>{{ avatarText(item.fullName) }}</span>
+            </VAvatar>
+            <div class="d-flex flex-column">
+              <h6 class="text-base">
+                <RouterLink
+                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
+                  class="font-weight-medium text-link"
+                >
+                  {{ item.fullName }}
+                </RouterLink>
+              </h6>
+              <div class="text-sm">
+                {{ item.email }}
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- 👉 Role -->
+        <template #item.role="{ item }">
+          <div class="d-flex align-center gap-x-2">
+            <VIcon
+              :size="22"
+              :icon="resolveUserRoleVariant(item.role).icon"
+              :color="resolveUserRoleVariant(item.role).color"
+            />
+
+            <div class="text-capitalize text-high-emphasis text-body-1">
+              {{ item.role }}
+            </div>
+          </div>
+        </template>
+
+        <!-- Plan -->
+        <template #item.plan="{ item }">
+          <div class="text-body-1 text-high-emphasis text-capitalize">
+            {{ item.currentPlan }}
+          </div>
+        </template>
+
+        <!-- Status -->
+        <template #item.status="{ item }">
+          <VChip
+            :color="resolveUserStatusVariant(item.status)"
+            size="small"
+            label
+            class="text-capitalize"
+          >
+            {{ item.status }}
+          </VChip>
+        </template>
+
+        <!-- Actions -->
+        <template
+          v-if="canAnyAction"
+          #item.actions="{ item }"
+        >
+          <!-- Show delete only when allowed -->
+          <IconBtn
+            v-if="canDeleteUser"
+            @click="deleteUser(item.id)"
+          >
+            <VIcon icon="tabler-trash" />
+          </IconBtn>
+
+          <!-- Show view only when allowed -->
+          <IconBtn v-if="canReadUser">
+            <VIcon icon="tabler-eye" />
+          </IconBtn>
+
+          <VBtn
+            icon
+            variant="text"
+            color="medium-emphasis"
+          >
+            <VIcon icon="tabler-dots-vertical" />
+            <VMenu activator="parent">
+              <VList>
+                <VListItem
+                  v-if="canReadUser"
+                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
+                >
+                  <template #prepend>
+                    <VIcon icon="tabler-eye" />
+                  </template>
+
+                  <VListItemTitle>Xem</VListItemTitle>
+                </VListItem>
+
+                <VListItem
+                  v-if="canUpdateUser"
+                  link
+                >
+                  <template #prepend>
+                    <VIcon icon="tabler-pencil" />
+                  </template>
+                  <VListItemTitle>Chỉnh sửa</VListItemTitle>
+                </VListItem>
+
+                <VListItem
+                  v-if="canDeleteUser"
+                  @click="deleteUser(item.id)"
+                >
+                  <template #prepend>
+                    <VIcon icon="tabler-trash" />
+                  </template>
+                  <VListItemTitle>Xóa</VListItemTitle>
+                </VListItem>
+              </VList>
+            </VMenu>
+          </VBtn>
+        </template>
+
+        <!-- pagination -->
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalUsers"
+          />
+        </template>
+      </VDataTableServer>
+      <!-- SECTION -->
+    </VCard>
+    <!-- 👉 Add New User -->
+    <AddNewUserDrawer
+      v-model:is-drawer-open="isAddNewUserDrawerVisible"
+      @user-data="addNewUser"
+    />
+  </section>
+</template>

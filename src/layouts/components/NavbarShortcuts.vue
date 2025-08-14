@@ -39,6 +39,12 @@ const shortcuts = [
       params: { tab: 'account' },
     },
   },
+  { icon: 'tabler-account',
+    subtitle: 'FAQ1',
+    title: 'FAQ1', 
+    to: { name: 'pages-faqnew' } },
+
+   
 ]
 </script>
 

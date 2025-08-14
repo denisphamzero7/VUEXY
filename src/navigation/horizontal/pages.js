@@ -8,11 +8,7 @@ export default [
         icon: { icon: 'tabler-user-circle' },
         to: { name: 'pages-user-profile-tab', params: { tab: 'profile' } },
       },
-      {
-        title: 'My Profile',
-        icon: { icon: 'tabler:user' },
-        to: { name: 'pages-my-profile-tab', params: { tab: 'myprofile' } },
-      },
+      { title: 'Đăng nhập', to: 'pages-signin' },
 
       {
         title: 'Account Settings',

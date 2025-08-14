@@ -132,7 +132,7 @@ export const handlerAppsNewUsers = [
   }),
 
   // 👉 Add user
-  http.post(('/api/apps/users'), async ({ request }) => {
+  http.post(('/api/apps/newusers'), async ({ request }) => {
     const user = await request.json()
 
     db.users.push({

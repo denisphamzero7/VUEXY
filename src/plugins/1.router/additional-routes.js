@@ -15,7 +15,9 @@ export const redirects = [
         return { name: 'dashboards-crm' }
       if (userRole === 'client')
         return { name: 'access-control' }
-      
+      if (userRole === 'user')
+        return { name: 'about' } 
+
       return { name: 'login', query: to.query }
     },
   },
@@ -36,7 +38,7 @@ export const redirects = [
     redirect: () => ({ name: 'pages-account-new-settings-tab', params: { tab: 'newaccount' } }),
   },
   {
-    path: '/pages/myprofile',
+    path: '/pages/my-profile',
     name: 'pages-my-profile',
     redirect: () => ({ name: 'pages-my-profile-tab', params: { tab: 'profile' } }),
   },
@@ -98,12 +100,9 @@ export const routes = [
     path: '/user/list',
     name: 'page-users',
     component: ()=> import('@/pages/users/list.vue'),
+   
   },
-  {
-    path: '/signin',
-    name: 'page-signin',
-    component: ()=> import('@/pages/signin.vue'),
-  },
+
    
  
 ]

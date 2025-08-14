@@ -113,11 +113,8 @@ export default [
     icon: { icon: 'tabler-file' },
     children: [
       { title: 'User Profile', to: { name: 'pages-user-profile-tab', params: { tab: 'profile' } } },
-  
       { title: 'Account Settings', to: { name: 'pages-account-settings-tab', params: { tab: 'account' } } },
-   
       { title: 'Pricing', to: 'pages-pricing' },
-     
       { title: 'FAQ', to: 'pages-faq' },
       
       {

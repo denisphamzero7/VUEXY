@@ -209,5 +209,23 @@
         "item": "item"
       }
     }
-  }
+  },
+  "About": "About",
+  "Users": "Users",
+  "MyHau": "My Hau",
+  "Cài đặt tài khoản người dùng": "Cập nhật tài khoản",
+  "Sơ yếu lí lịch": "Sơ yếu lý lịch",
+  "Định giá mới": "Định giá mới",
+  "Vai trò & Phân quyền": "Vai trò và phân quyền",
+  "Vai trò": "Vai trò",
+  "Phân quyền": "Phân quyền",
+  "Bảng điều khiển": "Bảng điều khiển",
+  "Về": "Về",
+  "Người dùng": "Người dùng",
+  "Phân tích": "Phân tích",
+  "Thương mại điện tử": "Thương mại điện tử",
+  "Quản lý logistics": "Quản lý logistics",
+  "Học viên": "Học viên",
+  "FAQ1":"FAQ1",
+  "signin":"Đăng nhập"
 }

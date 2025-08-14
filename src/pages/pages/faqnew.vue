@@ -1,6 +1,19 @@
 <script setup>
 import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png'
 
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'Page',
+  },
+})
+
+const ability = useAbility()
+const canReadPage = computed(() => ability.can('read', 'Page'))
+
+
+
+
 const faqSearchQuery = ref('')
 const faqs = ref([])
 
@@ -41,6 +54,12 @@ const contactUs = [
       density="comfortable"
       is-reverse
     />
+    <p v-if="canReadPage">
+      We have earned 50k more compared to previous week
+    </p>
+    <p v-else>
+      You don't have enough permission to view the finance data
+    </p>
 
     <!-- 👉 Faq sections and questions -->
     <VRow>

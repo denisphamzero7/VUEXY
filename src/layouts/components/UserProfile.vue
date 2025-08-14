@@ -1,8 +1,19 @@
 <script setup>
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useAbility } from '@/plugins/casl/composables/useAbility' 
+import { type } from '@/views/demos/components/alert/demoCodeAlert'
+
+
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+  },
+})
 
 const router = useRouter()
 const ability = useAbility()
+
 
 // TODO: Get type from backend
 const userData = useCookie('userData')
@@ -37,6 +48,13 @@ const userProfileList = [
       name: 'apps-user-view-id',
       params: { id: 21 },
     },
+    
+  },
+  {
+    type: 'navItem',
+    icon: 'tabler-user',
+    title: 'Sơ yếu lí lịch',
+    to: { name: 'pages-my-profile-tab', params: { tab: 'profile' }},
   },
   {
     type: 'navItem',

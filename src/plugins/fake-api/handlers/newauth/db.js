@@ -37,27 +37,11 @@ export const db = {
       password: 'client',
       avatar: `${import.meta.env.BASE_URL ?? '/'}images/avatars/avatar-2.png`,
       email: 'client@demo.com',
-      role: 'user',
+      role: 'client',
       abilityRules: [
         {
           action: 'read',
-          subject: 'User',
-        },
-        {
-          action: 'read',
           subject: 'AclDemo',
-        },
-        {
-          action: 'create',
-          subject: 'User',
-        },
-        {
-          action: 'delete',
-          subject: 'User',
-        },
-        {
-          action: 'update',
-          subject: 'User',
         },
       ],
     },
@@ -68,7 +52,7 @@ export const db = {
       password: 'client',
       avatar: `${import.meta.env.BASE_URL ?? '/'}images/avatars/avatar-2.png`,
       email: 'haupham@demo.com',
-      role: 'user',
+      role: 'client',
       abilityRules: [
         {
           action: 'read',

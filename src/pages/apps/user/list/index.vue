@@ -1,15 +1,6 @@
 <script setup>
 import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 
-// Add page meta for ACL protection - only admin can access user list
-definePage({
-  meta: {
-    action: 'read',
-    subject: 'User',
-  },
-})
-
-
 const searchQuery = ref('')
 const selectedRole = ref()
 const selectedPlan = ref()

@@ -2,13 +2,7 @@
 import { useApi } from '@/composables/useApi'
 import { computed } from 'vue'
 
-// Add page meta for ACL protection - only admin can access users list
-definePage({
-  meta: {
-    action: 'read',
-    subject: 'User',
-  },
-})
+definePage({ meta: { action: 'read', subject: 'AclDemo' } })
 
 const { data: usersData } = await useApi('/apps/users')
 
@@ -121,6 +115,9 @@ console.log('usersData', usersData.value)
 <template>
   <section>
     <VRow>
+      <p v-if="$can('read', 'AclDemo')">
+        Danh sách user
+      </p>
       <VCol
         v-for="(user, index) in users"
         :key="user.id || index"

@@ -5,10 +5,12 @@ export default [
     icon: { icon: 'tabler-chart-donut-2' },
     children: [
         
-      { title: 'Sơ yếu lí lịch', to: 'pages-my-profile', params: { tab: 'profile' } },
+      
       { title: 'Cài đặt tài khoản người dùng', to: { name: 'pages-account-new-settings-tab', params: { tab: 'newaccount' } } },
-      { title: 'Pricing new', to: 'pages-pricingnew' },
-      { title: 'FAQ1', to: 'pages-faqnew' },
+      { title: 'Sơ yếu lí lịch', to: { name: 'pages-my-profile-tab', params: { tab: 'profile' } } },
+      { title: 'Định giá mới', to: 'pages-pricingnew' },
+      
+      { title: 'Đăng nhập', to: 'pages-signin' },
       {
         title: 'Vai trò & Phân quyền',
         icon: { icon: 'tabler-lock' },
@@ -29,6 +31,8 @@ export default [
           {
             title: 'Người dùng',
             to: 'page-users',
+            action: 'read',
+            subject: 'User',
           }
           ,
           {
@@ -44,11 +48,11 @@ export default [
             title: 'Thương mại điện tử',
             to: 'newdashboards-ecommerce',
           },
-           {
+          {
             title: 'Quản lý logistics',
             to: 'newdashboards-logistics',
           },
-           {
+          {
             title: 'Học viên',
             to: 'newdashboards-newacademy',
           },
@@ -57,6 +61,7 @@ export default [
    
 
       },
+     
     ],
   },
 ]
