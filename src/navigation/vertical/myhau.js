@@ -19,20 +19,20 @@ export default [
       },
       {
 
-        title: 'Dashboards',
+        title: 'Bảng điều khiển',
         icon: { icon: 'tabler-smart-home' },
         children: [
           {
-            title: 'About',
+            title: 'Về',
             to: 'page-about',
           },
           {
-            title: 'Users',
+            title: 'Người dùng',
             to: 'page-users',
           }
           ,
           {
-            title: 'Analytics',
+            title: 'Phân tích',
             to: 'newdashboards-analytics',
           },
      
@@ -41,8 +41,16 @@ export default [
             to: 'newdashboards-crm',
           },
           {
-            title: 'Ecommerce',
+            title: 'Thương mại điện tử',
             to: 'newdashboards-ecommerce',
+          },
+           {
+            title: 'Quản lý logistics',
+            to: 'newdashboards-logistics',
+          },
+           {
+            title: 'Học viên',
+            to: 'newdashboards-newacademy',
           },
          
         ],

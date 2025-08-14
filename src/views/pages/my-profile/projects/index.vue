@@ -14,23 +14,23 @@ watch(router, fetchProjectData, { immediate: true })
 
 const moreList = [
   {
-    title: 'Rename Project',
+    title: 'Sửa lại tên dự án',
     value: 'Rename Project',
   },
   {
-    title: 'View Details',
+    title: 'Xem chi tiết',
     value: 'View Details',
   },
   {
-    title: 'Add to favorites',
+    title: 'Thêm vào mục yêu thích',
     value: 'Add to favorites',
   },
   {
-    type: 'divider',
+    type: 'dải phân cáchr',
     class: 'my-2',
   },
   {
-    title: 'Leave Project',
+    title: 'Rời khỏi dự án',
     value: 'Leave Project',
     class: 'text-error',
   },
@@ -80,15 +80,15 @@ const moreList = [
               <h6 class="text-base font-weight-medium">
                 {{ data.budgetSpent }} <span class="text-body-1">/ {{ data.budget }}</span>
               </h6>
-              <div>Total Budget</div>
+              <div>Tổng ngân sách</div>
             </div>
 
             <div>
               <h6 class="text-base font-weight-medium">
-                Start Date: <span class="text-body-1">{{ data.startDate }}</span>
+                Ngày bắt đầu: <span class="text-body-1">{{ data.startDate }}</span>
               </h6>
               <h6 class="text-base font-weight-medium">
-                Deadline: <span class="text-body-1">{{ data.deadline }}</span>
+                Thời hạn: <span class="text-body-1">{{ data.deadline }}</span>
               </h6>
             </div>
           </div>
@@ -103,7 +103,7 @@ const moreList = [
         <VCardText>
           <div class="d-flex align-center justify-space-between flex-wrap gap-2">
             <h6 class="text-base font-weight-medium">
-              All Hours: <span class="text-body-1">
+              Tất cả giờ: <span class="text-body-1">
                 {{ data.hours }}
               </span>
             </h6>
@@ -118,7 +118,7 @@ const moreList = [
           </div>
 
           <div class="d-flex align-center justify-space-between flex-wrap text-caption text-medium-emphasis mt-4 mb-2">
-            <span>Task: {{ data.tasks }}</span>
+            <span>Nhiệm vụ: {{ data.tasks }}</span>
             <span>{{ Math.round((data.completedTask / data.totalTask) * 100) }}% Completed</span>
           </div>
           <VProgressLinear

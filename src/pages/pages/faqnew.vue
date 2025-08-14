@@ -10,7 +10,7 @@ const fetchFaqs = async () => {
   faqs.value = data
 }
 
-const activeTab = ref('Payment')
+const activeTab = ref('Thanh toán')
 const activeQuestion = ref(0)
 
 watch(activeTab, () => activeQuestion.value = 0)

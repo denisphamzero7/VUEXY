@@ -23,8 +23,10 @@ import { handlerPagesMyProfile } from '@db/pages/myprofile/index'
 import { handlerAppsNewUsers } from '@db/apps/newusers/index'
 import { handlerAppsNewPermission } from '@db/apps/newpermission/index'
 import { handlerNewDashboard } from '@db/newdashboard/index'
+import {handlerAppNewLogistics} from '@db/apps/newlogistics/index'
+import { handlerAppsNewAcademy} from '@db/apps/newacademy/index'
 
-const worker = setupWorker(...handlerAppsEcommerce, ...handlerAppsAcademy, ...handlerAppsInvoice, ...handlerAppsUsers, ...handlerAppsEmail, ...handlerAppsCalendar, ...handlerAppsChat, ...handlerAppsPermission, ...handlerPagesHelpCenter, ...handlerPagesProfile, ...handlerPagesFaq, ...handlerPagesDatatable, ...handlerAppBarSearch, ...handlerAppLogistics, ...handlerAuth, ...handlerAppsKanban, ...handlerDashboard, ... handlerPagesFaqnew, ...handlerPagesMyProfile, ...handlerAppsNewUsers, ...handlerAppsNewPermission, ...handlerNewDashboard)
+const worker = setupWorker(...handlerAppsEcommerce, ...handlerAppsAcademy, ...handlerAppsInvoice, ...handlerAppsUsers, ...handlerAppsEmail, ...handlerAppsCalendar, ...handlerAppsChat, ...handlerAppsPermission, ...handlerPagesHelpCenter, ...handlerPagesProfile, ...handlerPagesFaq, ...handlerPagesDatatable, ...handlerAppBarSearch, ...handlerAppLogistics, ...handlerAuth, ...handlerAppsKanban, ...handlerDashboard, ... handlerPagesFaqnew, ...handlerPagesMyProfile, ...handlerAppsNewUsers, ...handlerAppsNewPermission, ...handlerNewDashboard, ...handlerAppNewLogistics, ...handlerAppsNewAcademy)
 export default function () {
   const workerUrl = `${import.meta.env.BASE_URL ?? '/'}mockServiceWorker.js`
 

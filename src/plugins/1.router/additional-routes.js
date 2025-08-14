@@ -70,9 +70,19 @@ export const routes = [
     component: () => import('@/pages/apps/logistics/dashboard.vue'),
   },
   {
+    path: '/newdashboards/logistics',
+    name: 'newdashboards-logistics',
+    component: () => import('@/pages/apps/newlogistics/dashboard.vue'),
+  },
+  {
     path: '/dashboards/academy',
     name: 'dashboards-academy',
     component: () => import('@/pages/apps/academy/dashboard.vue'),
+  },
+  {
+    path: '/dashboards/newacademy',
+    name: 'newdashboards-newacademy',
+    component: () => import('@/pages/apps/newacademy/dashboard.vue'),
   },
   {
     path: '/apps/ecommerce/dashboard',

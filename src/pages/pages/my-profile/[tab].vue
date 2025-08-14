@@ -1,6 +1,6 @@
 <script setup>
 import UserProfileHeader from '@/views/pages/my-profile/UserProfileHeader.vue'
-import UserConnections from '@/views/pages/my-profile/profile/Connections.vue'
+import UserConnections from '@/views/pages/my-profile/connections/index.vue'
 import UserProfile from '@/views/pages/my-profile/profile/index.vue'
 import UserProjects from '@/views/pages/my-profile/projects/index.vue'
 import UserTeam from '@/views/pages/my-profile/team/index.vue'
@@ -89,7 +89,7 @@ const tabs = [
 
       <!-- Connections -->
       <VWindowItem value="connections">
-        <UserConnections :connections-data="profileTabData?.connections ?? []" />
+        <UserConnections />
       </VWindowItem>
     </VWindow>
   </div>
