@@ -6,6 +6,27 @@ import LogisticsOrderByCountries from '@/views/apps/newlogistics/LogisticsOrderB
 import LogisticsOverviewTable from '@/views/apps/newlogistics/LogisticsOverviewTable.vue'
 import LogisticsShipmentStatistics from '@/views/apps/newlogistics/LogisticsShipmentStatistics.vue'
 import LogisticsVehicleOverview from '@/views/apps/newlogistics/LogisticsVehicleOverview.vue'
+
+const User= [{
+  name: "hậu",
+  lop: "3",
+},
+{
+  name: "hậu",
+  lop: "3",
+},
+{
+  name: "hậu",
+  lop: "3",
+},
+{
+  name: "hậu",
+  lop: "3",
+},
+{
+  name: "hậu",
+  lop: "3",
+}]
 </script>
 
 <template>

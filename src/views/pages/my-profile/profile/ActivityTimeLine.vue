@@ -3,6 +3,15 @@ import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import pdf from '@images/icons/project-icons/pdf.png'
+
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+})
 </script>
 
 <template>

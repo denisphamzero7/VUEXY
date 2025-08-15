@@ -169,10 +169,10 @@ export const db = {
         title: 'Nhóm Nhà thiết kế',
         avatar: xdLabel,
         avatarGroup: [
-          { avatar: avatar1, name: 'Jimmy Ressula' },
-          { avatar: avatar2, name: 'Kristi Lawker' },
-          { avatar: avatar3, name: 'Danny Paul' },
-          { avatar: avatar4, name: 'Alicia Littleton' },
+          { avatar: avatar1, name: 'Hau' },
+          { avatar: avatar2, name: 'thương' },
+          { avatar: avatar3, name: 'Hoài' },
+          { avatar: avatar4, name: 'hương' },
         ],
         description: 'Một nhóm thiết kế hoặc sản phẩm không chỉ là những người trong đó. Nhóm bao gồm con người, vai trò họ đóng và sự hợp tác mà họ tạo ra.',
         chips: [

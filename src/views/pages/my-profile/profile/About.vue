@@ -5,6 +5,15 @@ const props = defineProps({
     required: true,
   },
 })
+
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+})
 </script>
 
 <template>

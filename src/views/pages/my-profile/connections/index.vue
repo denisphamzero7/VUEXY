@@ -2,6 +2,15 @@
 const router = useRoute('pages-my-profile-tab')
 const connectionData = ref([])
 
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+}) 
+
 const fetchProjectData = async () => {
   if (router.params.tab === 'connections') {
     const data = await $api('/pages/myprofile', { query: { tab: router.params.tab } }).catch(err => console.log(err))
@@ -99,7 +108,7 @@ watch(router, fetchProjectData, { immediate: true })
               :prepend-icon="data.isConnected ? 'tabler-user-check' : 'tabler-user-plus'"
               :variant="data.isConnected ? 'elevated' : 'tonal'"
             >
-              {{ data.isConnected ? 'connected' : 'connect' }}
+              {{ data.isConnected ? 'Đã kết nối' : ' Kết nối' }}
             </VBtn>
 
             <IconBtn

@@ -4,15 +4,6 @@ export default [
     icon: { icon: 'tabler-smart-home' },
     children: [
       {
-        title: 'About',
-        to: 'page-about',
-      },
-      {
-        title: 'Users',
-        to: 'page-users',
-      }
-      ,
-      {
         title: 'Analytics',
         to: 'dashboards-analytics',
       },

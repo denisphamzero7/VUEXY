@@ -20,6 +20,15 @@ const moreList = [
     value: 'Report Bug',
   },
 ]
+
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+})
 </script>
 
 <template>

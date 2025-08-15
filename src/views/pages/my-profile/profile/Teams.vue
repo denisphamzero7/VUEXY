@@ -6,6 +6,15 @@ const props = defineProps({
   },
 })
 
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+}) 
+
 const moreList = [
   {
     title: 'Share connections',

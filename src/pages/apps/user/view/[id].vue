@@ -9,6 +9,13 @@ import UserTabSecurity from '@/views/apps/user/view/UserTabSecurity.vue'
 const route = useRoute('apps-user-view-id')
 const userTab = ref(null)
 
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+  },
+})
+
 const tabs = [
   {
     icon: 'tabler-users',

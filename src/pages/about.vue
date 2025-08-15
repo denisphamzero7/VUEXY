@@ -1,6 +1,7 @@
 <script setup>
 import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 import { useAbility } from '@/plugins/casl/composables/useAbility' 
+import { router } from '@/plugins/1.router'
 
 
 definePage({
@@ -22,6 +23,8 @@ const canUpdateUser = computed(() => ability.can('update', 'User'))
 const canAnyAction = computed(() => (
   canReadUser.value || canUpdateUser.value || canDeleteUser.value
 ))
+
+
 
 const searchQuery = ref('')
 const selectedRole = ref()
@@ -72,7 +75,7 @@ const headers = [
 const {
   data: usersData,
   execute: fetchUsers,
-} = await useApi(createUrl('/apps/users', {
+} = await useApi(createUrl('/apps/newusers', {
   query: {
     q: searchQuery,
     status: selectedStatus,

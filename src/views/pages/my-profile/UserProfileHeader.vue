@@ -67,7 +67,7 @@ if (error.value) {
           </div>
 
           <VBtn prepend-icon="tabler-user-check">
-            Connected
+            Đã kết nối
           </VBtn>
         </div>
       </div>

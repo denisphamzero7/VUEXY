@@ -5,6 +5,15 @@ import Connection from './Connections.vue'
 import ProjectList from './ProjectList.vue'
 import Teams from './Teams.vue'
 
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
+  },
+})
+
 const router = useRoute('pages-my-profile-tab')
 const profileTabData = ref()
 

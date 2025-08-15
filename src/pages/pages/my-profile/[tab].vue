@@ -9,8 +9,14 @@ definePage({
   meta: {
     navActiveLink: 'pages-my-profile-tab',
     key: 'tab',
+    action: 'read',
+    subject: 'AclDemo',
+    layout: 'blank',
+    public: true,
   },
 })
+
+
 
 const route = useRoute('pages-my-profile-tab')
 

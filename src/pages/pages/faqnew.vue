@@ -4,12 +4,12 @@ import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-lapto
 definePage({
   meta: {
     action: 'read',
-    subject: 'Page',
+    subject: 'AclDemo',
   },
 })
 
 const ability = useAbility()
-const canReadPage = computed(() => ability.can('read', 'Page'))
+const canReadUser = computed(() => ability.can('read', 'User'))
 
 
 
@@ -54,7 +54,7 @@ const contactUs = [
       density="comfortable"
       is-reverse
     />
-    <p v-if="canReadPage">
+    <p v-if="canReadUser">
       We have earned 50k more compared to previous week
     </p>
     <p v-else>
