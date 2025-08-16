@@ -1,6 +1,6 @@
 <script setup>
-import Footer from '@/views/front-pages/front-page-footer.vue'
-import Navbar from '@/views/front-pages/front-page-navbar.vue'
+import Footer from '@/views/front-newpages/front-page-footer.vue'
+import Navbar from '@/views/front-newpages/front-page-navbar.vue'
 import { useConfigStore } from '@core/stores/config'
 
 const store = useConfigStore()
