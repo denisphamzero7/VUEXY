@@ -2,6 +2,7 @@
 import { useTheme } from 'vuetify'
 import ScrollToTop from '@core/components/ScrollToTop.vue'
 import initCore from '@core/initCore'
+import NotificationList from '@/pages/components/NotificationList.vue'
 import {
   initConfigStore,
   useConfigStore,
@@ -24,5 +25,6 @@ const configStore = useConfigStore()
       <RouterView />
       <ScrollToTop />
     </VApp>
+    <NotificationList />
   </VLocaleProvider>
 </template>

@@ -9,13 +9,28 @@ export const redirects = [
     name: 'index',
     redirect: to => {
       // TODO: Get type from backend
-      const userData = useCookie('userData')
-      const userRole = userData.value?.role
-      if (userRole === 'admin')
+      // const userData = useCookie('userData')
+      // const user  = useCookie('user')
+      // const userRole = userData.value?.role
+      // const role = user.value?.role
+      // if (userRole === 'admin'||  role.name === 'admin')
+      //   return { name: 'dashboards-crm' }
+      // if (userRole === 'client')
+      //   return { name: 'access-control' }
+      // if (userRole === 'user'|| role.name === 'user')
+      //   return { name: 'about' } 
+
+      // return { name: 'login', query: to.query },
+
+     
+      const user  = useCookie('user')
+   
+      const role = user.value?.role
+      if ( role.name === 'admin')
         return { name: 'dashboards-crm' }
-      if (userRole === 'client')
+      if (role.name === 'client')
         return { name: 'access-control' }
-      if (userRole === 'user')
+      if (role.name === 'user')
         return { name: 'about' } 
 
       return { name: 'login', query: to.query }

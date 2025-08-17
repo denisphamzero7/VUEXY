@@ -1,13 +1,12 @@
-// src/stores/abilityStore.ts
+// src/stores/abilityStore.js
 import { defineStore } from 'pinia'
-import { defineAbilityFor, type AppAbility, type Actions, type Subjects } from '../ability/defineAbility'
-import type { AuthUser } from '../types/auth'
+import { defineAbilityFor } from '../ability/defineAbility'
 import { ref, computed } from 'vue'
 
 export const useAbilityStore = defineStore('ability', () => {
   // Reactive state
-  const currentUser = ref<AuthUser | null>(null)
-  const ability = ref<AppAbility>(defineAbilityFor(null))
+  const currentUser = ref(null)
+  const ability = ref(defineAbilityFor(null))
 
   // Computed properties
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -15,13 +14,13 @@ export const useAbilityStore = defineStore('ability', () => {
   const userPermissions = computed(() => currentUser.value?.role?.permissions || [])
 
   // Actions
-  const updateAbility = (user: AuthUser | null) => {
+  const updateAbility = user => {
     console.log('Updating ability for user:', user)
     currentUser.value = user
     ability.value = defineAbilityFor(user)
-    
+
     console.log('New ability created:', ability.value)
-    
+
     // Update localStorage
     if (user) {
       localStorage.setItem('user', JSON.stringify(user))
@@ -31,25 +30,28 @@ export const useAbilityStore = defineStore('ability', () => {
     }
   }
 
-  const can = (action: Actions, subject: Subjects): boolean => {
+  const can = (action, subject) => {
     const result = ability.value.can(action, subject)
+
     console.log(`Checking permission: ${action} ${subject} = ${result}`)
+    
     return result
   }
 
-  const cannot = (action: Actions, subject: Subjects): boolean => {
+  const cannot = (action, subject) => {
     return ability.value.cannot(action, subject)
   }
 
   const initializeFromStorage = () => {
     const storedUser = localStorage.getItem('user')
     const token = localStorage.getItem('accessToken')
-    
+
     console.log('Initializing from storage:', { storedUser, token })
-    
+
     if (storedUser && token) {
       try {
         const user = JSON.parse(storedUser)
+
         console.log('Parsed user:', user)
         updateAbility(user)
       } catch (error) {
@@ -70,17 +72,17 @@ export const useAbilityStore = defineStore('ability', () => {
     // State
     currentUser,
     ability,
-    
+
     // Computed
     isAuthenticated,
     userRole,
     userPermissions,
-    
+
     // Actions
     updateAbility,
     can,
     cannot,
     initializeFromStorage,
-    logout
+    logout,
   }
 })

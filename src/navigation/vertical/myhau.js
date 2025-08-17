@@ -8,6 +8,7 @@ export default [
       
       { title: 'Cài đặt tài khoản người dùng', to: { name: 'pages-account-new-settings-tab', params: { tab: 'newaccount' } } },
       { title: 'Sơ yếu lí lịch', to: { name: 'pages-my-profile-tab', params: { tab: 'profile' } } },
+      { title: 'Quản lý người dùng', to: { name: 'pages-quanli-user-tab', params: { tab: 'user' } } },
   
       { title: 'Định giá mới', to: 'pages-pricingnew' },
       { title: 'Landing page (trang đích)',

@@ -88,7 +88,7 @@ const {
   },
 }))
 
-const users = computed(() => usersData.value.users)
+const users = computed(() => usersData.value)
 const totalUsers = computed(() => usersData.value.totalUsers)
 
 // 👉 search filters

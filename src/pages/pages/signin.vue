@@ -1,10 +1,14 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?raw'
 import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?raw'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { useAuthStore } from '@/@core/stores/auth'
+import { useNotification } from '@/@core/composable/useNotification'
+// eslint-disable-next-line import/named
+import { useRoute, useRouter } from 'vue-router' // nếu cần (đảm bảo import đúng)
 
 definePage({
   meta: {
@@ -13,12 +17,8 @@ definePage({
   },
 })
 
-// form state (giữ mẫu ban đầu để không thay đổi giao diện)
-const form = ref({
-  email: 'admin@demo.com',
-  password: 'admin',
-  remember: false,
-})
+const { addNotification } = useNotification()
+const { credentials, login, isAuthenticated, user, tokens } = useAuthStore()
 
 // errors từ server (nếu có)
 const errors = ref({
@@ -32,48 +32,44 @@ const refVForm = ref()
 // hiển thị mật khẩu
 const isPasswordVisible = ref(false)
 
-// route / router / ability (giữ tương tự như trang login trước)
+// route / router / ability
 const route = useRoute()
 const router = useRouter()
 const ability = useAbility()
 
+onMounted(() => {
+  // isAuthenticated là ref => dùng .value
+  if (isAuthenticated?.value && user?.value && tokens?.value?.accessToken) {
+    console.log('User already authenticated, redirecting to dashboard')
+    router.push({ name: 'Dashboard' })
+  }
+})
+
 // login function — gọi API, lưu cookie, cập nhật ability và redirect
-const login = async () => {
+const signin = async () => {
   // reset lỗi trước khi gọi
   errors.value = { email: undefined, password: undefined }
 
   try {
-    const res = await $api('/newauth/login', {
-      method: 'POST',
-      body: {
-        email: form.value.email,
-        password: form.value.password,
-      },
-      onResponseError({ response }) {
-        // server trả về validation errors
-        errors.value = response._data?.errors ?? {}
-      },
-    })
+    // login() trong auth store sẽ xử lý lưu user/token; ở đây ta chỉ chờ hoàn tất
+    await login()
 
-    // nếu login thành công
-    const { accessToken, userData, userAbilityRules } = res
+    addNotification('Đăng nhập thành công')
 
-    useCookie('userAbilityRules').value = userAbilityRules
-    
-    // cập nhật ability client-side
-
-    ability.update(userAbilityRules)
-    useCookie('userData').value = userData
-    useCookie('accessToken').value = accessToken
-
-    // redirect về query `to` nếu có, hoặc trang chủ
+    // redirect (nếu có query.to thì dùng nó)
     await nextTick(() => {
       router.replace(route.query.to ? String(route.query.to) : '/')
     })
   } catch (err) {
-    // nếu api ném lỗi khác (network, 500, ...)
-    // ghi log để dev debug; bạn có thể thay bằng toast notification
-    console.error(err)
+    // Nếu server trả về validation errors (422 hoặc tương tự)
+    const validationErrors = err?.response?.data?.errors || err?.response?._data?.errors
+    if (validationErrors) {
+      errors.value = validationErrors
+    } else {
+      // khác (network, 500, v.v.) — log hoặc show notification
+      console.error('Login error', err)
+      addNotification('Có lỗi xảy ra khi đăng nhập')
+    }
   }
 }
 
@@ -81,7 +77,7 @@ const login = async () => {
 const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
     if (isValid)
-      login()
+      signin()
   })
 }
 </script>
@@ -138,7 +134,7 @@ const onSubmit = () => {
               <!-- email -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.email"
+                  v-model="credentials.username"
                   autofocus
                   label="Email hoặc tên"
                   type="email"
@@ -150,22 +146,19 @@ const onSubmit = () => {
               <!-- password -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.password"
+                  v-model="credentials.password"
                   label="Password"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   autocomplete="password"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
                   :error-messages="errors.password"
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
 
                 <!-- remember me checkbox -->
                 <div class="d-flex align-center justify-space-between flex-wrap my-6">
-                  <VCheckbox
-                    v-model="form.remember"
-                    label="Remember me"
-                  />
+                  <VCheckbox label="Remember me" />
 
                   <RouterLink
                     class="text-primary"
