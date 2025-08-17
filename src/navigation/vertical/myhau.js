@@ -20,8 +20,19 @@ export default [
           },
         ], 
       },
+      { title: 'Báo cáo',
+        icon: { icon: 'tabler-files' },
+        children: [
+          {
+            title: 'Báo cáo',
+            to: 'pages-baocao',
+            target: '_blank',
+          },
+        ], 
+      },
       { title: 'QA', to: 'pages-faqnew' },
       { title: 'Người dùng', to: 'pages-user' },
+   
       { title: 'Đăng nhập', to: 'pages-signin' },
       {
         title: 'Vai trò & Phân quyền',
