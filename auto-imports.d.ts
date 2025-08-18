@@ -7,6 +7,7 @@
 export {}
 declare global {
   const $api: typeof import('./src/utils/api.js')['$api']
+  const $newapi: typeof import('./src/utils/newapi.js')['$newapi']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -29,14 +30,17 @@ declare global {
   const createGenericProjection: typeof import('@vueuse/math')['createGenericProjection']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
+  const createPermission: typeof import('./src/composables/useMyApi.js')['createPermission']
   const createPinia: typeof import('pinia')['createPinia']
   const createProjection: typeof import('@vueuse/math')['createProjection']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
+  const createRole: typeof import('./src/composables/useMyApi.js')['createRole']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
   const createUrl: typeof import('./src/@core/composable/createUrl.js')['createUrl']
+  const createUser: typeof import('./src/composables/useMyApi.js')['createUser']
   const customRef: typeof import('vue')['customRef']
   const debouncedRef: typeof import('@vueuse/core')['debouncedRef']
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']
@@ -44,6 +48,9 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const definePage: typeof import('unplugin-vue-router/runtime')['definePage']
   const defineStore: typeof import('pinia')['defineStore']
+  const deletePermission: typeof import('./src/composables/useMyApi.js')['deletePermission']
+  const deleteRole: typeof import('./src/composables/useMyApi.js')['deleteRole']
+  const deleteUser: typeof import('./src/composables/useMyApi.js')['deleteUser']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const emailValidator: typeof import('./src/@core/utils/validators.js')['emailValidator']
@@ -51,8 +58,15 @@ declare global {
   const formatDate: typeof import('./src/@core/utils/formatters.js')['formatDate']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']
   const getActivePinia: typeof import('pinia')['getActivePinia']
+  const getCompanies: typeof import('./src/composables/useMyApi.js')['getCompanies']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getPermissionId: typeof import('./src/composables/useMyApi.js')['getPermissionId']
+  const getPermissions: typeof import('./src/composables/useMyApi.js')['getPermissions']
+  const getRoleById: typeof import('./src/composables/useMyApi.js')['getRoleById']
+  const getRoles: typeof import('./src/composables/useMyApi.js')['getRoles']
+  const getUserById: typeof import('./src/composables/useMyApi.js')['getUserById']
+  const getUsers: typeof import('./src/composables/useMyApi.js')['getUsers']
   const h: typeof import('vue')['h']
   const hexToRgb: typeof import('./src/@core/utils/colorConverter.js')['hexToRgb']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
@@ -74,6 +88,7 @@ declare global {
   const logicAnd: typeof import('@vueuse/math')['logicAnd']
   const logicNot: typeof import('@vueuse/math')['logicNot']
   const logicOr: typeof import('@vueuse/math')['logicOr']
+  const login: typeof import('./src/composables/useMyApi.js')['login']
   const makeDestructurable: typeof import('@vueuse/core')['makeDestructurable']
   const mapActions: typeof import('pinia')['mapActions']
   const mapGetters: typeof import('pinia')['mapGetters']
@@ -122,6 +137,7 @@ declare global {
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const regexValidator: typeof import('./src/@core/utils/validators.js')['regexValidator']
+  const register: typeof import('./src/composables/useMyApi.js')['register']
   const registerPlugins: typeof import('./src/@core/utils/plugins.js')['registerPlugins']
   const requiredValidator: typeof import('./src/@core/utils/validators.js')['requiredValidator']
   const resolveComponent: typeof import('vue')['resolveComponent']
@@ -154,6 +170,9 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
+  const updateAUser: typeof import('./src/composables/useMyApi.js')['updateAUser']
+  const updatePermission: typeof import('./src/composables/useMyApi.js')['updatePermission']
+  const updateRole: typeof import('./src/composables/useMyApi.js')['updateRole']
   const urlValidator: typeof import('./src/@core/utils/validators.js')['urlValidator']
   const useAbility: typeof import('./src/plugins/casl/composables/useAbility.js')['useAbility']
   const useAbs: typeof import('@vueuse/math')['useAbs']
@@ -257,6 +276,7 @@ declare global {
   const useMouseInElement: typeof import('@vueuse/core')['useMouseInElement']
   const useMousePressed: typeof import('@vueuse/core')['useMousePressed']
   const useMutationObserver: typeof import('@vueuse/core')['useMutationObserver']
+  const useMyApi: typeof import('./src/composables/useMyApi.js')['default']
   const useNavigatorLanguage: typeof import('@vueuse/core')['useNavigatorLanguage']
   const useNetwork: typeof import('@vueuse/core')['useNetwork']
   const useNow: typeof import('@vueuse/core')['useNow']
@@ -389,14 +409,17 @@ declare module 'vue' {
     readonly createGenericProjection: UnwrapRef<typeof import('@vueuse/math')['createGenericProjection']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
+    readonly createPermission: UnwrapRef<typeof import('./src/composables/useMyApi.js')['createPermission']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
     readonly createProjection: UnwrapRef<typeof import('@vueuse/math')['createProjection']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
+    readonly createRole: UnwrapRef<typeof import('./src/composables/useMyApi.js')['createRole']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
     readonly createUrl: UnwrapRef<typeof import('./src/@core/composable/createUrl.js')['createUrl']>
+    readonly createUser: UnwrapRef<typeof import('./src/composables/useMyApi.js')['createUser']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly debouncedRef: UnwrapRef<typeof import('@vueuse/core')['debouncedRef']>
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
@@ -404,6 +427,9 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly definePage: UnwrapRef<typeof import('unplugin-vue-router/runtime')['definePage']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
+    readonly deletePermission: UnwrapRef<typeof import('./src/composables/useMyApi.js')['deletePermission']>
+    readonly deleteRole: UnwrapRef<typeof import('./src/composables/useMyApi.js')['deleteRole']>
+    readonly deleteUser: UnwrapRef<typeof import('./src/composables/useMyApi.js')['deleteUser']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly emailValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['emailValidator']>
@@ -411,8 +437,15 @@ declare module 'vue' {
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
+    readonly getCompanies: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getCompanies']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getPermissionId: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getPermissionId']>
+    readonly getPermissions: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getPermissions']>
+    readonly getRoleById: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getRoleById']>
+    readonly getRoles: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getRoles']>
+    readonly getUserById: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getUserById']>
+    readonly getUsers: UnwrapRef<typeof import('./src/composables/useMyApi.js')['getUsers']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hexToRgb: UnwrapRef<typeof import('./src/@core/utils/colorConverter.js')['hexToRgb']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -434,6 +467,7 @@ declare module 'vue' {
     readonly logicAnd: UnwrapRef<typeof import('@vueuse/math')['logicAnd']>
     readonly logicNot: UnwrapRef<typeof import('@vueuse/math')['logicNot']>
     readonly logicOr: UnwrapRef<typeof import('@vueuse/math')['logicOr']>
+    readonly login: UnwrapRef<typeof import('./src/composables/useMyApi.js')['login']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
@@ -482,6 +516,7 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly regexValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['regexValidator']>
+    readonly register: UnwrapRef<typeof import('./src/composables/useMyApi.js')['register']>
     readonly registerPlugins: UnwrapRef<typeof import('./src/@core/utils/plugins.js')['registerPlugins']>
     readonly requiredValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['requiredValidator']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
@@ -514,6 +549,9 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
+    readonly updateAUser: UnwrapRef<typeof import('./src/composables/useMyApi.js')['updateAUser']>
+    readonly updatePermission: UnwrapRef<typeof import('./src/composables/useMyApi.js')['updatePermission']>
+    readonly updateRole: UnwrapRef<typeof import('./src/composables/useMyApi.js')['updateRole']>
     readonly urlValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['urlValidator']>
     readonly useAbility: UnwrapRef<typeof import('./src/plugins/casl/composables/useAbility.js')['useAbility']>
     readonly useAbs: UnwrapRef<typeof import('@vueuse/math')['useAbs']>
@@ -617,6 +655,7 @@ declare module 'vue' {
     readonly useMouseInElement: UnwrapRef<typeof import('@vueuse/core')['useMouseInElement']>
     readonly useMousePressed: UnwrapRef<typeof import('@vueuse/core')['useMousePressed']>
     readonly useMutationObserver: UnwrapRef<typeof import('@vueuse/core')['useMutationObserver']>
+    readonly useMyApi: UnwrapRef<typeof import('./src/composables/useMyApi.js')['default']>
     readonly useNavigatorLanguage: UnwrapRef<typeof import('@vueuse/core')['useNavigatorLanguage']>
     readonly useNetwork: UnwrapRef<typeof import('@vueuse/core')['useNetwork']>
     readonly useNow: UnwrapRef<typeof import('@vueuse/core')['useNow']>

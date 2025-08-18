@@ -1,5 +1,6 @@
 <script setup>
 import sittingGirlWithLaptop from '@images/illustrations/sitting-girl-with-laptop.png'
+import { getUsers } from '@/composables/useMyApi'
 
 const faqSearchQuery = ref('')
 const faqs = ref([])
@@ -9,6 +10,18 @@ const fetchFaqs = async () => {
 
   faqs.value = data
 }
+
+const fetchUser = async () =>{
+  try {
+    const { data } = await getUsers()
+
+    console.log('user', data.data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+onMounted(fetchUser)
 
 const activeTab = ref('Thanh toán')
 const activeQuestion = ref(0)

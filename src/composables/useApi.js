@@ -1,6 +1,10 @@
 import { createFetch } from '@vueuse/core'
 import { destr } from 'destr'
 
+const url ='http://localhost:8080/api/v1'
+
+// import.meta.env.VITE_API_BASE_URL
+
 export const useApi = createFetch({
   baseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
   fetchOptions: {

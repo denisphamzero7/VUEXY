@@ -360,6 +360,26 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "$newapi": true,
+    "createPermission": true,
+    "createRole": true,
+    "createUser": true,
+    "deletePermission": true,
+    "deleteRole": true,
+    "deleteUser": true,
+    "getCompanies": true,
+    "getPermissionId": true,
+    "getPermissions": true,
+    "getRoleById": true,
+    "getRoles": true,
+    "getUserById": true,
+    "getUsers": true,
+    "login": true,
+    "register": true,
+    "updateAUser": true,
+    "updatePermission": true,
+    "updateRole": true,
+    "useMyApi": true
   }
 }
