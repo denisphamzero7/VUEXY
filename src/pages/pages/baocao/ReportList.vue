@@ -176,28 +176,39 @@ function getLabelText(kind, item) {
         </template>
 
         <template #item.title="{ item }">
-          <div
-            class="d-flex align-items-center"
-            style="gap:8px; width:100%;"
-          >
+          <div class="d-flex align-items-center">
             <!-- Tiêu đề: chiếm không gian còn lại, có ellipsis -->
             <div
               :title="item.title"
-              style="flex: 1 1 auto; min-width: 0; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;"
+    
               class="text-body-1"
             >
               {{ item.title }}
             </div>
 
             <!-- Badge "Danh Mục Khác" nếu có tag -->
-            <span
+            <!--
+              <span
               v-if="item.tag"
-              class="badge rounded-pill"
+              class="badge rounded-pill bg-red"
               :title="item.tag"
-              style="background:#6b7280; color:#ffffff; font-weight:700; font-size:12px; padding:4px 8px;"
+              color="primary"
+              >
+              {{ item.tag }}
+              </span> 
+            -->
+
+            <VChip 
+              v-if="item.tag"
+              :label="false"
+              color="secondary"
+              variant="elevated"
+              size="small"
+
+              :title="item.tag"
             >
               {{ item.tag }}
-            </span>
+            </VChip>
           </div>
         </template>
 
@@ -460,36 +471,36 @@ function getLabelText(kind, item) {
 </template>
 
 <style lang="scss" scoped>
-.report-table {
-  .v-table thead th:nth-last-child(2) .v-data-table-header__content,
-  .v-table tbody td:nth-last-child(2) {
-    justify-content: flex-end;
-  }
+// .report-table {
+//   .v-table thead th:nth-last-child(2) .v-data-table-header__content,
+//   .v-table tbody td:nth-last-child(2) {
+//     justify-content: flex-end;
+//   }
 
-  .v-table tbody td:nth-last-child(2) {
-    text-align: right;
-    /* stylelint-disable-next-line liberty/use-logical-spec */
-    padding-right: 1rem;
-  }
-}
+//   .v-table tbody td:nth-last-child(2) {
+//     text-align: right;
+//     /* stylelint-disable-next-line liberty/use-logical-spec */
+//     padding-right: 1rem;
+//   }
+// }
 
-.status-chip {
-  display: inline-block;
-  /* stylelint-disable-next-line liberty/use-logical-spec */
-  padding: 4px 10px;
-  border-radius: 12px;
-  background-color: #e6f9ef;
-  color: #22a05f;
-  font-weight: 600;
-}
+// .status-chip {
+//   display: inline-block;
+//   /* stylelint-disable-next-line liberty/use-logical-spec */
+//   padding: 4px 10px;
+//   border-radius: 12px;
+//   background-color: #e6f9ef;
+//   color: #22a05f;
+//   font-weight: 600;
+// }
 
-.export-btn {
-  background-color: #fff6ea;
-  color: #d97706;
-  /* stylelint-disable-next-line order/properties-order */
-  border-radius: 8px;
-  box-shadow: none;
-  /* stylelint-disable-next-line order/properties-order */
-  border: 1px solid rgba(217, 119, 6, 0.12);
-}
+// .export-btn {
+//   background-color: #fff6ea;
+//   color: #d97706;
+//   /* stylelint-disable-next-line order/properties-order */
+//   border-radius: 8px;
+//   box-shadow: none;
+//   /* stylelint-disable-next-line order/properties-order */
+//   border: 1px solid rgba(217, 119, 6, 0.12);
+// }
 </style>

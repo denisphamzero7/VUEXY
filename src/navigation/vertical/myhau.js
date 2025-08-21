@@ -17,10 +17,18 @@ export default [
         children: [
           { title: 'Danh sách người dùng', to: 'pages-user-list' },
           { title: 'Thêm người dùng', to: 'pages-user-adduser' },
-          { title: 'Thêm người dùng', to: 'pages-user-detailuser' },
+          
+          // { title: 'chi tiết người dùng', to: 'pages-user-detailuser-id' },
         ],
       },
-      
+
+      {
+        title: 'component',
+        icon: { icon: 'tabler-lock' },
+        children: [
+          { title: 'Input customize', to: 'pages-my-component' },
+        ],
+      },
       {
         title: 'Vai trò & Phân quyền',
         icon: { icon: 'tabler-lock' },

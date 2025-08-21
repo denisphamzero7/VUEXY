@@ -60,26 +60,62 @@ const signin = async () => {
   authStore.credentials.password = form.value.password
 
   try {
+    // gọi login (giữ nguyên)
     await authStore.login()
 
-    // Nếu user chọn NOT rememberMe -> chuyển dữ liệu sang sessionStorage để không lưu lâu
-    if (!rememberMe.value) {
-      const access = localStorage.getItem('accessToken')
-      const refresh = localStorage.getItem('refreshToken')
-      const userRaw = localStorage.getItem('user')
+    // --- BỔ SUNG: đảm bảo lưu trên localStorage ---
+    // Nguồn token/user có thể do authStore lưu, hoặc do login trả về local/session.
+    // Ta thử đọc từ authStore nếu có, nếu không thì kiểm tra sessionStorage rồi localStorage.
+    try {
+      // access token
+      const access =
+
+        // ưu tiên thuộc tính store (nếu authStore có lưu)
+        (authStore && (authStore.accessToken || authStore.token || authStore.access)) ||
+
+        // hoặc local/session storage (nếu login đã tự lưu tạm)
+        localStorage.getItem('accessToken') ||
+        sessionStorage.getItem('accessToken')
 
       if (access) {
-        sessionStorage.setItem('accessToken', access)
-        localStorage.removeItem('accessToken')
+        localStorage.setItem('accessToken', access)
       }
+
+      // refresh token
+      const refresh =
+        (authStore && (authStore.refreshToken || authStore.refresh)) ||
+        localStorage.getItem('refreshToken') ||
+        sessionStorage.getItem('refreshToken')
+
       if (refresh) {
-        sessionStorage.setItem('refreshToken', refresh)
-        localStorage.removeItem('refreshToken')
+        localStorage.setItem('refreshToken', refresh)
       }
-      if (userRaw) {
-        sessionStorage.setItem('user', userRaw)
-        localStorage.removeItem('user')
+
+      // user object: nếu authStore.user tồn tại (object), stringify; nếu không, thử session/local
+      const userObj =
+        (authStore && (authStore.user || authStore.currentUser)) ||
+        (() => {
+          const s = sessionStorage.getItem('user') || localStorage.getItem('user')
+          
+          return s ? JSON.parse(s) : null
+        })()
+
+      if (userObj) {
+        // nếu userObj là string (đã stringify), đảm bảo lưu đúng dạng string
+        if (typeof userObj === 'string') {
+          localStorage.setItem('user', userObj)
+        } else {
+          localStorage.setItem('user', JSON.stringify(userObj))
+        }
       }
+
+      // xóa bất kỳ bản token/user nào trên sessionStorage để tránh nhầm lẫn
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refreshToken')
+      sessionStorage.removeItem('user')
+    } catch (errStorage) {
+      // không block nếu việc lưu thất bại — chỉ log
+      console.warn('Không thể lưu token vào localStorage:', errStorage)
     }
 
     // redirect về `to` nếu có query, hoặc trang chủ
@@ -104,6 +140,7 @@ const signin = async () => {
     console.error('Login error:', err)
   }
 }
+
 
 /* submit form — validate Vuetify form trước khi gọi signin */
 const onSubmit = () => {

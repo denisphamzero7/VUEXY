@@ -380,6 +380,8 @@
     "updateAUser": true,
     "updatePermission": true,
     "updateRole": true,
-    "useMyApi": true
+    "useMyApi": true,
+    "uwrapData": true,
+    "_unwrapData": true
   }
 }

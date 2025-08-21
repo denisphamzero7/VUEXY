@@ -1,115 +1,3 @@
-<script setup>
-import { ref, computed, watch, onBeforeUnmount, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@core/stores/user'
-
-const router = useRouter()
-const userStore = useUserStore()
-
-// table headers (giữ nguyên hoặc chỉnh key tuỳ backend)
-const headers = [
-  { title: 'ID', key: '_id' }, // backend trả _id
-  { title: 'Họ tên', key: 'name' },
-  { title: 'Email', key: 'email' },
-  { title: 'Trạng thái', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false },
-]
-
-// local state
-const searchQuery = ref('')
-const selectedRows = ref([])
-
-let debounceTimer = null
-const DEBOUNCE_MS = 400
-
-// sync search -> store.keyWord (server expects name param handled in store.fetchUsers)
-watch(
-  searchQuery,
-  () => {
-    if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => {
-      userStore.keyWord = searchQuery.value.trim()
-
-      // reset về trang 1 khi search
-      userStore.fetchUsers(1)
-    }, DEBOUNCE_MS)
-  },
-)
-
-// cleanup
-onBeforeUnmount(() => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-})
-
-// expose store loading / error
-const loading = computed(() => userStore.loading)
-const error = computed(() => userStore.error)
-
-// users + pagination from store
-const users = computed(() => userStore.users ?? [])
-const totalUsers = computed(() => userStore.totalItems ?? users.value.length)
-
-// page computed (two-way binding with table)
-const page = computed({
-  get: () => userStore.currentPage ?? 1,
-  set: val => {
-    // validate and delegate to store
-    userStore.goToPage(val)
-  },
-})
-
-// items per page mapped to store.limit
-const itemsPerPage = computed({
-  get: () => userStore.limit ?? 10,
-  set: val => {
-    userStore.limit = val
-
-    // refetch from page 1 after change limit
-    userStore.fetchUsers(1)
-  },
-})
-
-// watch store.currentPage and store.limit to fetch when changed externally
-watch(
-  () => userStore.currentPage,
-  n => {
-    // ensure fetch for new page
-    userStore.fetchUsers(n ?? 1)
-  },
-)
-watch(
-  () => userStore.limit,
-  () => {
-    userStore.fetchUsers(1)
-  },
-)
-
-// initial fetch on mount
-onMounted(() => {
-  userStore.fetchUsers(userStore.currentPage ?? 1)
-})
-
-// navigation to edit page
-const goToEdit = id => {
-  router.push(`/users/${id}`)
-}
-
-// delete user (optimistic handled in store.RemoveUser)
-const deleteUser = async id => {
-  try {
-    const ok = await userStore.RemoveUser(id)
-    if (ok) {
-      // refetch current page to keep data consistent
-      userStore.fetchUsers(userStore.currentPage ?? 1)
-    } else {
-      console.warn('Xoá không thành công')
-    }
-  } catch (err) {
-    console.error('Delete user error:', err)
-  }
-}
-</script>
-
 <template>
   <div>
     <VCard class="mb-6">
@@ -138,7 +26,6 @@ const deleteUser = async id => {
 
       <VDataTable
         v-model:items-per-page="itemsPerPage"
-        v-model:model-value="selectedRows"
         v-model:page="page"
         :headers="headers"
         :items="users"
@@ -146,35 +33,67 @@ const deleteUser = async id => {
         show-select
         class="text-no-wrap"
       >
+        <!-- Name column with avatar-like display -->
+        <template #item.name="{ item }">
+          <div class="d-flex align-center">
+            <VAvatar
+              size="32"
+              :color="!item.avatar ? 'primary' : ''"
+              :variant="!item.avatar ? 'tonal' : undefined"
+            >
+              <VImg
+                v-if="item.avatar"
+                :src="item.avatar"
+              />
+              <span v-else>{{ initials(item.name) }}</span>
+            </VAvatar>
+            <div class="d-flex flex-column ms-3">
+              <span class="d-block font-weight-medium text-high-emphasis text-truncate">{{ item.name }}</span>
+              <small class="text-muted">{{ item.address || '' }}</small>
+            </div>
+          </div>
+        </template>
+
+        <template #item.role="{ item }">
+          {{ (item?.role && item.role?.name) || item.role || '—' }}
+        </template>
+
+        <template #item.company="{ item }">
+          {{ (item.company && (item.company.name || item.company.title)) || item.companyId || '—' }}
+        </template>
+
         <template #item.status="{ item }">
           <VChip
             :color="item.status ? 'success' : 'error'"
             size="small"
             label
           >
-            {{ item.status ? "Hoạt động" : "Khoá" }}
+            {{ item.status ? 'Hoạt động' : 'Khoá' }}
           </VChip>
         </template>
 
         <template #item.actions="{ item }">
-          <IconBtn @click="$router.push(`/users/${item._id}`)">
-            <VIcon icon="tabler-edit" />
-          </IconBtn>
-
-          <IconBtn>
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem
-                  value="delete"
-                  prepend-icon="tabler-trash"
-                  @click="deleteUser(item._id)"
-                >
-                  Xoá
-                </VListItem>
-              </VList>
-            </VMenu>
-          </IconBtn>
+          <div class="d-flex gap-1">
+            <IconBtn
+              color="primary"
+              @click="editItem(item)"
+            >
+              <VIcon icon="tabler-edit" />
+            </IconBtn>
+            <IconBtn
+              color="error"
+              @click="confirmDeleteDialog(item._id ?? item.id)"
+            >
+              <VIcon icon="tabler-trash" />
+            </IconBtn>
+            <IconBtn
+              title="Mở trang chi tiết"
+              color="success"
+              :to="{ name: 'pages-user-detailuser-id', params: { id: item._id ?? item.id } }"
+            >
+              <VIcon icon="tabler-eye" />
+            </IconBtn>
+          </div>
         </template>
 
         <template #bottom>
@@ -186,5 +105,462 @@ const deleteUser = async id => {
         </template>
       </VDataTable>
     </VCard>
+
+    <!-- Edit Dialog -->
+    <VDialog
+      v-model="editDialog"
+      max-width="720"
+    >
+      <VCard>
+        <VCardTitle class="d-flex justify-space-between align-center">
+          <div>
+            <h3 class="text-h6 mb-0">
+              Chỉnh sửa người dùng
+            </h3>
+            <div class="text-caption">
+              ID: {{ editedId || '—' }}
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <VBtn
+              text
+              :disabled="saving"
+              @click="closeEditDialog"
+            >
+              Đóng
+            </VBtn>
+          </div>
+        </VCardTitle>
+
+        <VCardText>
+          <div class="max-w-lg mx-auto p-2">
+            <VForm @submit.prevent="saveEdit">
+              <AppTextField
+                v-model="editedItem.name"
+                label="Họ tên"
+                placeholder="Nhập tên"
+              />
+              <AppTextField
+                v-model="editedItem.email"
+                label="Email"
+                type="email"
+                placeholder="Nhập email"
+              />
+              <AppTextField
+                v-model="editedItem.password"
+                label="Mật khẩu (để trống nếu không đổi)"
+                type="password"
+              />
+              <AppTextField
+                v-model="editedItem.phone"
+                label="SĐT"
+                type="text"
+              />
+              <AppTextField
+                v-model="editedItem.age"
+                label="Tuổi"
+                type="number"
+              />
+
+              <div class="mb-4">
+                <label class="d-block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                <select
+                  v-model="editedItem.gender"
+                  class="w-full border-gray-300 rounded p-2"
+                >
+                  <option
+                    disabled
+                    value=""
+                  >
+                    Chọn giới tính
+                  </option>
+                  <option value="male">
+                    Nam
+                  </option>
+                  <option value="female">
+                    Nữ
+                  </option>
+                </select>
+              </div>
+
+              <AppTextField
+                v-model="editedItem.address"
+                label="Địa chỉ"
+                placeholder="Nhập địa chỉ"
+              />
+
+              <div class="mb-4">
+                <label class="d-block text-sm font-medium text-gray-700 mb-1">Vai trò</label>
+                <select
+                  v-model="editedItem.role"
+                  class="w-full border-gray-300 rounded p-2"
+                >
+                  <option
+                    disabled
+                    value=""
+                  >
+                    Chọn vai trò
+                  </option>
+                  <option
+                    v-for="r in roles"
+                    :key="r._id"
+                    :value="r._id"
+                  >
+                    {{ r.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label class="d-block text-sm font-medium text-gray-700 mb-1">Công ty</label>
+                <select
+                  v-model="editedItem.companyId"
+                  class="w-full border-gray-300 rounded p-2"
+                >
+                  <option
+                    disabled
+                    value=""
+                  >
+                    Chọn công ty
+                  </option>
+                  <option
+                    v-for="c in companies"
+                    :key="c._id"
+                    :value="c._id"
+                  >
+                    {{ c.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div
+                v-if="errors"
+                class="text-error mb-3"
+              >
+                {{ errors }}
+              </div>
+
+              <div class="d-flex gap-3 mt-4">
+                <VBtn
+                  text
+                  :disabled="saving"
+                  @click="closeEditDialog"
+                >
+                  Huỷ
+                </VBtn>
+                <VSpacer />
+                <VBtn
+                  color="primary"
+                  type="submit"
+                  :loading="saving"
+                >
+                  Lưu thay đổi
+                </VBtn>
+              </div>
+            </VForm>
+          </div>
+        </VCardText>
+      </VCard>
+    </VDialog>
+
+    <!-- Delete Dialog -->
+    <VDialog
+      v-model="deleteDialog"
+      max-width="420"
+    >
+      <VCard title="Xác nhận xoá người dùng">
+        <VCardText>
+          <div class="mb-4">
+            Bạn có chắc muốn xoá user với ID: <strong>{{ deleteId }}</strong> ?
+          </div>
+          <div class="d-flex justify-center gap-4">
+            <VBtn
+              color="secondary"
+              variant="outlined"
+              @click="closeDeleteDialog"
+            >
+              Huỷ
+            </VBtn>
+            <VBtn
+              color="error"
+              variant="elevated"
+              :loading="deleting"
+              @click="deleteUserConfirm"
+            >
+              Xoá
+            </VBtn>
+          </div>
+        </VCardText>
+      </VCard>
+    </VDialog>
   </div>
 </template>
+
+<script setup>
+import { useUserStore } from '@core/stores/user'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+// Headers mapping to user fields
+const headers = [
+  { title: 'Name', key: 'name' },
+  { title: 'Email', key: 'email' },
+  { title: 'Role', key: 'role' },
+  { title: 'Company', key: 'company' },
+  { title: 'Status', key: 'status' },
+  { title: 'Actions', key: 'actions', sortable: false },
+]
+
+// search
+const searchQuery = ref('')
+const DEBOUNCE_MS = 350
+let searchTimer = null
+
+// expose store data
+const users = computed(() => userStore.users ?? [])
+const totalUsers = computed(() => Number(userStore.totalItems ?? users.value.length ?? 0))
+
+// pagination: computed two-way bound to store
+let pageLock = false
+
+const page = computed({
+  get() {
+    return Number(userStore.currentPage ?? 1)
+  },
+  set(val) {
+    const next = Number(val) || 1
+    if (next === Number(userStore.currentPage ?? 1)) return
+    if (pageLock) return
+    pageLock = true
+    userStore.fetchUsers(next).finally(() => {
+      pageLock = false
+    })
+  },
+})
+
+let limitLock = false
+
+const itemsPerPage = computed({
+  get() {
+    return Number(userStore.limit ?? 10)
+  },
+  set(val) {
+    const next = Number(val) || 10
+    if (next === Number(userStore.limit ?? 10)) return
+    if (limitLock) return
+    limitLock = true
+    userStore.limit = next
+    userStore.fetchUsers(1).finally(() => {
+      limitLock = false
+    })
+  },
+})
+
+// debounce search watcher
+watch(searchQuery, v => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    userStore.keyWord = (v || '').trim()
+    userStore.fetchUsers(1).catch(e => console.error(e))
+    searchTimer = null
+  }, DEBOUNCE_MS)
+})
+
+// initial load
+onMounted(async () => {
+  if (!userStore.limit) userStore.limit = 10
+  await userStore.fetchUsers(Number(userStore.currentPage ?? 1))
+
+  // prefetch roles/companies for selects (non-blocking)
+  userStore.fetchRoles().then(r => {}).catch(() => {})
+  userStore.fetchCompanies().then(c => {}).catch(() => {})
+})
+
+// helpers
+const initials = (name = '') => {
+  if (!name) return ''
+  
+  return name.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase()
+}
+
+// navigation helper (optional)
+const goToEditRoute = id => {
+  if (!id) return
+  router.push(`name: detailuser/${id}`)
+}
+
+/* ------------------ edit dialog ------------------ */
+const editDialog = ref(false)
+const editedId = ref(null)
+
+const editedItem = reactive({
+  _id: '',
+  name: '',
+  email: '',
+  password: '',
+  age: null,
+  phone: '',
+  gender: '',
+  address: '',
+  role: '',
+  companyId: '',
+  avatar: '',
+  status: false,
+})
+
+const saving = ref(false)
+const errors = ref(null)
+
+const roles = ref([])
+const companies = ref([])
+
+async function editItem(item) {
+  // open and populate
+  editedId.value = item._id ?? item.id
+  errors.value = null
+  editDialog.value = true
+
+  // ensure selects loaded
+  if (!roles.value.length) {
+    try { roles.value = (await userStore.fetchRoles()) || [] } catch(e){ console.warn(e) }
+  }
+  if (!companies.value.length) {
+    try { companies.value = (await userStore.fetchCompanies()) || [] } catch(e){ console.warn(e) }
+  }
+
+  // fetch full user data (in case list lacks fields)
+  try {
+    const data = await userStore.fetchUserById(String(editedId.value))
+    if (!data) {
+      errors.value = `Không tìm thấy người dùng ${editedId.value}`
+      
+      return
+    }
+
+    // hydrate editedItem
+    editedItem._id = data._id ?? data.id ?? editedId.value
+    editedItem.name = data.name ?? ''
+    editedItem.email = data.email ?? ''
+    editedItem.password = '' // don't prefill
+    editedItem.age = data.age ?? null
+    editedItem.phone = data.phone ?? ''
+    editedItem.gender = data.gender ?? ''
+    editedItem.address = data.address ?? ''
+    editedItem.role = data.role?._id ?? data.role ?? ''
+    editedItem.companyId = data.company?._id ?? data.companyId ?? ''
+    editedItem.avatar = data.avatar ?? ''
+    editedItem.status = data.status ?? false
+  } catch (e) {
+    console.error('fetchUserById error', e)
+    errors.value = userStore.error || (e && e.message) || 'Lỗi khi tải user'
+  }
+}
+
+function closeEditDialog() {
+  editDialog.value = false
+  editedId.value = null
+  errors.value = null
+
+  // reset editedItem
+  editedItem._id = ''
+  editedItem.name = ''
+  editedItem.email = ''
+  editedItem.password = ''
+  editedItem.age = null
+  editedItem.phone = ''
+  editedItem.gender = ''
+  editedItem.address = ''
+  editedItem.role = ''
+  editedItem.companyId = ''
+  editedItem.avatar = ''
+  editedItem.status = false
+}
+
+async function saveEdit() {
+  errors.value = null
+  if (!editedItem.name?.trim() || !editedItem.email?.trim()) {
+    errors.value = 'Vui lòng nhập tên và email.'
+    
+    return
+  }
+  if (!editedId.value) {
+    errors.value = 'Missing user id'
+    
+    return
+  }
+
+  saving.value = true
+  try {
+    const payload = {
+      name: (editedItem.name || '').trim(),
+      email: (editedItem.email || '').trim(),
+      ...(editedItem.password ? { password: editedItem.password } : {}),
+      age: editedItem.age,
+      phone: editedItem.phone,
+      gender: editedItem.gender,
+      address: (editedItem.address || '').trim(),
+      role: editedItem.role,
+      company: {
+        _id: editedItem.companyId,
+        name: (companies.value.find(c => c._id === editedItem.companyId) || {}).name || '',
+      },
+      status: editedItem.status||undefined,
+      avatar: editedItem.avatar || undefined,
+    }
+
+    const res = await userStore.updateUser(String(editedId.value), payload)
+    if (res) {
+      await userStore.fetchUsers(Number(userStore.currentPage ?? 1))
+      closeEditDialog()
+    } else {
+      errors.value = userStore.error || 'Không thể cập nhật người dùng'
+    }
+  } catch (e) {
+    console.error('updateUser error', e)
+    errors.value = userStore.error || (e && e.message) || 'Lỗi khi cập nhật'
+  } finally {
+    saving.value = false
+  }
+}
+
+/* ------------------ delete dialog ------------------ */
+const deleteDialog = ref(false)
+const deleteId = ref(null)
+const deleting = ref(false)
+
+function confirmDeleteDialog(id) {
+  deleteId.value = id
+  deleteDialog.value = true
+}
+
+function closeDeleteDialog() {
+  deleteDialog.value = false
+  deleteId.value = null
+}
+
+async function deleteUserConfirm() {
+  if (!deleteId.value) return
+  deleting.value = true
+  try {
+    const ok = await userStore.RemoveUser(deleteId.value)
+    if (ok) {
+      await userStore.fetchUsers(Number(userStore.currentPage ?? 1))
+      closeDeleteDialog()
+    } else {
+      console.error('Không xóa được', userStore.error)
+    }
+  } catch (e) {
+    console.error('Delete error', e)
+  } finally {
+    deleting.value = false
+  }
+}
+</script>
+
+<style scoped>
+.text-error { color: #d32f2f; }
+</style>

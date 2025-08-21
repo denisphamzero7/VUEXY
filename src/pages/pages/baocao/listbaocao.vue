@@ -205,6 +205,7 @@ function onDelete(item) { console.log('delete', item) }
 
 <style lang="scss" scoped>
 .report-table {
+
   /* căn phải cho cột số (ID) bằng cách chọn 2nd-from-last column
      (an toàn khi có checkbox làm cột đầu) */
   .v-table thead th:nth-last-child(2) .v-data-table-header__content,
@@ -220,7 +221,6 @@ function onDelete(item) { console.log('delete', item) }
   }
 }
 
-
 /* status chip giống ảnh (xanh nhạt) */
 .status-chip {
   display: inline-block;
@@ -234,8 +234,10 @@ function onDelete(item) { console.log('delete', item) }
 
 /* export button: tông warning / cam nhẹ */
 .export-btn {
-  background-color: #fff6ea; /* nền cam nhạt */
-  color: #d97706; /* chữ cam đậm */
+  background-color: #fff6ea;
+  /* nền cam nhạt */
+  color: #d97706;
+  /* chữ cam đậm */
   /* stylelint-disable-next-line order/properties-order */
   border-radius: 8px;
   box-shadow: none;

@@ -219,7 +219,7 @@ const shipmentConfig = {
 </template>
 
 <style lang="scss">
-@use "@core/scss/template/libs/apex-chart.scss";
+@use "@core/scss/template/libs/apex-chart";
 
 .v-btn-group--divided .v-btn:not(:last-child) {
   border-inline-end-color: rgba(var(--v-theme-primary), 0.5);

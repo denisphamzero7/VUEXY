@@ -1,15 +1,15 @@
 // src/stores/user.js
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
 import {
-  deleteUser,
-  getUserById,
-  getUsers,
   createUser,
-  updateAUser,
+  deleteUser,
   getCompanies,
   getRoles,
+  getUserById,
+  getUsers,
+  updateAUser,
 } from '@/composables/useMyApi'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
   // state
@@ -35,10 +35,10 @@ export const useUserStore = defineStore('user', () => {
   const totalPages = ref(1)
   const totalItems = ref(0)
   const limit = ref(10)
+  const populate = ref('role')
 
   // helpers
   const _unwrapData = resp => {
-    // safe unwrap: prefer resp.data.data, then resp.data, then resp
     if (!resp) return null
     
     return resp.data?.data ?? resp.data ?? resp
@@ -47,27 +47,74 @@ export const useUserStore = defineStore('user', () => {
   const findUserIndex = id =>
     users.value.findIndex(u => u._id === id || u.id === id)
 
+  // ========== logging helper ==========
+  const _log = {
+    usersFetchStart: (page, opts = {}) => {
+      console.groupCollapsed(`[userStore] fetchUsers start — page=${page}, limit=${limit.value}`)
+      console.log('params:', { page, limit: limit.value, keyword: keyWord.value, opts })
+      console.log('store.currentPage (before):', currentPage.value)
+      console.log('timestamp:', new Date().toISOString())
+    },
+    usersFetchEnd: (page, info = {}) => {
+      console.log('fetchUsers end:', info)
+      console.groupEnd()
+    },
+    userFetchStart: id => {
+      console.groupCollapsed(`[userStore] fetchUserById start — id=${id}`)
+      console.log('timestamp:', new Date().toISOString())
+    },
+    userFetchEnd: (id, info = {}) => {
+      console.log('fetchUserById end:', info)
+      console.groupEnd()
+    },
+    error: (where, err) => {
+      console.error(`[userStore] error in ${where}:`, err)
+    },
+  }
+
   // actions
   const fetchUsers = async (page = 1) => {
+    // logging start
+    const start = performance.now()
+
+    _log.usersFetchStart(page)
+
     loading.value = true
     try {
+      // call API
       const { data } = await getUsers({
         page,
         limit: limit.value,
         name: keyWord.value,
+        populate: populate.value,
       })
 
-
-      // API shape in your TS code: data.data -> resp, resp.result, resp.pagination
       const resp = data?.data ?? data
 
+      console.log('resp', resp) 
+
+      // update store
       users.value = resp?.result ?? []
       currentPage.value = resp?.pagination?.currentPage ?? page
       totalPages.value = resp?.pagination?.totalPages ?? 1
       totalItems.value = resp?.pagination?.totalItems ?? users.value.length
       error.value = null
+
+      // logging end with details
+      const duration = Math.round(performance.now() - start)
+
+      _log.usersFetchEnd(page, {
+        durationMs: duration,
+        itemsReturned: Array.isArray(resp?.result) ? resp.result.length : (users.value.length || 0),
+        pagination: resp?.pagination ?? null,
+        storeCurrentPage: currentPage.value,
+      })
+
+      return resp
     } catch (e) {
       error.value = e?.message || 'Lỗi khi tải danh sách'
+      _log.error('fetchUsers', e)
+      throw e
     } finally {
       loading.value = false
     }
@@ -81,10 +128,13 @@ export const useUserStore = defineStore('user', () => {
 
       users.value = resp?.result ?? []
       error.value = null
+
+      console.log('[userStore] searchUsersByQuery result count=', users.value.length, 'query=', query)
       
       return users.value
     } catch (e) {
       error.value = e?.message || 'Không thể tìm người dùng'
+      _log.error('searchUsersByQuery', e)
       
       return []
     } finally {
@@ -92,29 +142,34 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  function goToPage(page) {
-    if (page < 1 || page > totalPages.value) return
-    
-    return fetchUsers(page)
-  }
-  function nextPage() {
-    return goToPage(currentPage.value + 1)
-  }
-  function prevPage() {
-    return goToPage(currentPage.value - 1)
-  }
-
   const fetchUserById = async id => {
+    if (!id) {
+      const err = new Error('fetchUserById: missing id')
+
+      _log.error('fetchUserById', err)
+      
+      return null
+    }
+
+    _log.userFetchStart(id)
+
+    const start = performance.now()
+
     loading.value = true
     try {
       const { data } = await getUserById(id)
       const resp = _unwrapData(data)
 
       error.value = null
-      
+
+      const duration = Math.round(performance.now() - start)
+
+      _log.userFetchEnd(id, { durationMs: duration, resultExists: !!resp, respSample: resp ? (typeof resp === 'object' ? { ...resp, password: undefined } : resp) : null })
+
       return resp
     } catch (e) {
       error.value = e?.message || `Lỗi khi tải user ${id}`
+      _log.error('fetchUserById', e)
       
       return null
     } finally {
@@ -126,28 +181,27 @@ export const useUserStore = defineStore('user', () => {
     const index = findUserIndex(id)
     if (index === -1) {
       error.value = 'User không tồn tại'
+      console.warn('[userStore] RemoveUser: user not found id=', id)
       
       return false
     }
     const originalUser = users.value[index]
 
-
-    // optimistic remove
     users.value.splice(index, 1)
     try {
       const response = await deleteUser(id)
 
-      // If API returns something that indicates failure, throw
       if (!response || (response.status && response.status >= 400)) {
         throw new Error('Không thể xoá')
       }
       error.value = null
+      console.log('[userStore] RemoveUser success id=', id)
       
       return true
     } catch (e) {
-      // rollback
       users.value.splice(index, 0, originalUser)
       error.value = e?.message || 'Không thể xoá user'
+      _log.error('RemoveUser', e)
       
       return false
     }
@@ -156,17 +210,17 @@ export const useUserStore = defineStore('user', () => {
   const createNewUser = async payload => {
     loading.value = true
     try {
-      // payload should be plain object
       const response = await createUser(payload)
       const created = _unwrapData(response)
 
-      // If created is an object (single user), push it
       if (created) users.value.push(created)
       error.value = null
+      console.log('[userStore] createNewUser success:', created)
       
       return created ?? true
     } catch (e) {
       error.value = e?.message || 'Không thể tạo người dùng'
+      _log.error('createNewUser', e)
       
       return false
     } finally {
@@ -178,9 +232,11 @@ export const useUserStore = defineStore('user', () => {
     loading.value = true
     try {
       const response = await updateAUser(id, payload)
+      
+      console.log(response.data)
+
       const updated = _unwrapData(response)
 
-      // replace in users list if exists, else push
       const idx = findUserIndex(id)
       if (idx !== -1 && updated) {
         users.value.splice(idx, 1, updated)
@@ -188,10 +244,12 @@ export const useUserStore = defineStore('user', () => {
         users.value.push(updated)
       }
       error.value = null
+      console.log('[userStore] updateUser success id=', id)
       
       return updated ?? true
     } catch (e) {
       error.value = e?.message || 'Không thể cập nhật người dùng'
+      _log.error('updateUser', e)
       
       return false
     } finally {
@@ -203,15 +261,15 @@ export const useUserStore = defineStore('user', () => {
     loading.value = true
     try {
       const { data } = await getCompanies()
-
-      // Some APIs wrap in data.data.data etc.
       const resp = _unwrapData(data)
 
       error.value = null
+      console.log('[userStore] fetchCompanies count=', Array.isArray(resp) ? resp.length : 0)
       
       return resp ?? []
     } catch (e) {
       error.value = e?.message || 'Lỗi khi tải danh sách công ty'
+      _log.error('fetchCompanies', e)
       
       return []
     } finally {
@@ -223,15 +281,15 @@ export const useUserStore = defineStore('user', () => {
     loading.value = true
     try {
       const { data } = await getRoles()
-
-      // original code used data.data?.result
       const roles = data?.data?.result ?? data?.data ?? data
-
+      
       error.value = null
+      console.log('[userStore] fetchRoles count=', Array.isArray(roles) ? roles.length : 0)
       
       return roles ?? []
     } catch (e) {
       error.value = e?.message || 'Lỗi khi tải danh sách vai trò'
+      _log.error('fetchRoles', e)
       
       return []
     } finally {
@@ -260,9 +318,6 @@ export const useUserStore = defineStore('user', () => {
     fetchRoles,
     updateUser,
     searchUsersByQuery,
-    goToPage,
-    nextPage,
-    prevPage,
   }
 })
 
