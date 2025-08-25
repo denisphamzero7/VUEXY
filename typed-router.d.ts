@@ -38,6 +38,8 @@ declare module 'vue-router/auto-routes' {
     'apps-ecommerce-referrals': RouteRecordInfo<'apps-ecommerce-referrals', '/apps/ecommerce/referrals', Record<never, never>, Record<never, never>>,
     'apps-ecommerce-settings': RouteRecordInfo<'apps-ecommerce-settings', '/apps/ecommerce/settings', Record<never, never>, Record<never, never>>,
     'apps-email': RouteRecordInfo<'apps-email', '/apps/email', Record<never, never>, Record<never, never>>,
+    'apps-form-templates-id': RouteRecordInfo<'apps-form-templates-id', '/apps/form-templates/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'apps-form-templates-list-target': RouteRecordInfo<'apps-form-templates-list-target', '/apps/form-templates/list/:target', { target: ParamValue<true> }, { target: ParamValue<false> }>,
     'apps-invoice-add': RouteRecordInfo<'apps-invoice-add', '/apps/invoice/add', Record<never, never>, Record<never, never>>,
     'apps-invoice-edit-id': RouteRecordInfo<'apps-invoice-edit-id', '/apps/invoice/edit/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'apps-invoice-list': RouteRecordInfo<'apps-invoice-list', '/apps/invoice/list', Record<never, never>, Record<never, never>>,

@@ -1,5 +1,14 @@
 <template>
   <div>
+    <VProgressLinear
+      v-if="isLoading"
+      color="primary"
+      indeterminate
+      size="64"
+    />
+
+
+
     <VCard class="mb-6">
       <VCardText class="px-3">
         <h3 class="text-h5">
@@ -18,6 +27,7 @@
             v-model="searchQuery"
             placeholder="Tìm kiếm user..."
             style="inline-size: 250px;"
+            :disabled="isLoading"
           />
         </div>
       </VCardText>
@@ -25,8 +35,13 @@
       <VDivider />
 
       <VDataTable
+      
+
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
+
+        :item-key="_id"
+
         :headers="headers"
         :items="users"
         :items-length="totalUsers"
@@ -76,12 +91,14 @@
           <div class="d-flex gap-1">
             <IconBtn
               color="primary"
+              :disabled="isLoading"
               @click="editItem(item)"
             >
               <VIcon icon="tabler-edit" />
             </IconBtn>
             <IconBtn
               color="error"
+              :disabled="isLoading"
               @click="confirmDeleteDialog(item._id ?? item.id)"
             >
               <VIcon icon="tabler-trash" />
@@ -90,6 +107,7 @@
               title="Mở trang chi tiết"
               color="success"
               :to="{ name: 'pages-user-detailuser-id', params: { id: item._id ?? item.id } }"
+              :disabled="isLoading"
             >
               <VIcon icon="tabler-eye" />
             </IconBtn>
@@ -110,6 +128,7 @@
     <VDialog
       v-model="editDialog"
       max-width="720"
+      :persistent="saving"
     >
       <VCard>
         <VCardTitle class="d-flex justify-space-between align-center">
@@ -140,27 +159,32 @@
                 v-model="editedItem.name"
                 label="Họ tên"
                 placeholder="Nhập tên"
+                :disabled="saving"
               />
               <AppTextField
                 v-model="editedItem.email"
                 label="Email"
                 type="email"
                 placeholder="Nhập email"
+                :disabled="saving"
               />
               <AppTextField
                 v-model="editedItem.password"
                 label="Mật khẩu (để trống nếu không đổi)"
                 type="password"
+                :disabled="saving"
               />
               <AppTextField
                 v-model="editedItem.phone"
                 label="SĐT"
                 type="text"
+                :disabled="saving"
               />
               <AppTextField
                 v-model="editedItem.age"
                 label="Tuổi"
                 type="number"
+                :disabled="saving"
               />
 
               <div class="mb-4">
@@ -168,6 +192,7 @@
                 <select
                   v-model="editedItem.gender"
                   class="w-full border-gray-300 rounded p-2"
+                  :disabled="saving"
                 >
                   <option
                     disabled
@@ -188,6 +213,7 @@
                 v-model="editedItem.address"
                 label="Địa chỉ"
                 placeholder="Nhập địa chỉ"
+                :disabled="saving"
               />
 
               <div class="mb-4">
@@ -195,6 +221,7 @@
                 <select
                   v-model="editedItem.role"
                   class="w-full border-gray-300 rounded p-2"
+                  :disabled="saving || !roles.length"
                 >
                   <option
                     disabled
@@ -217,6 +244,7 @@
                 <select
                   v-model="editedItem.companyId"
                   class="w-full border-gray-300 rounded p-2"
+                  :disabled="saving || !companies.length"
                 >
                   <option
                     disabled
@@ -268,6 +296,7 @@
     <VDialog
       v-model="deleteDialog"
       max-width="420"
+      :persistent="deleting"
     >
       <VCard title="Xác nhận xoá người dùng">
         <VCardText>
@@ -278,6 +307,7 @@
             <VBtn
               color="secondary"
               variant="outlined"
+              :disabled="deleting"
               @click="closeDeleteDialog"
             >
               Huỷ
@@ -323,6 +353,11 @@ let searchTimer = null
 // expose store data
 const users = computed(() => userStore.users ?? [])
 const totalUsers = computed(() => Number(userStore.totalItems ?? users.value.length ?? 0))
+
+// Combine global store loading and local operation loading flags into a single source of truth
+const saving = ref(false)
+const deleting = ref(false)
+const isLoading = computed(() => Boolean(userStore.loading) || saving.value || deleting.value)
 
 // pagination: computed two-way bound to store
 let pageLock = false
@@ -412,7 +447,6 @@ const editedItem = reactive({
   status: false,
 })
 
-const saving = ref(false)
 const errors = ref(null)
 
 const roles = ref([])
@@ -437,8 +471,9 @@ async function editItem(item) {
     const data = await userStore.fetchUserById(String(editedId.value))
     if (!data) {
       errors.value = `Không tìm thấy người dùng ${editedId.value}`
-      
+
       return
+
     }
 
     // hydrate editedItem
@@ -461,6 +496,7 @@ async function editItem(item) {
 }
 
 function closeEditDialog() {
+  if (saving.value) return // prevent closing while saving
   editDialog.value = false
   editedId.value = null
   errors.value = null
@@ -484,13 +520,15 @@ async function saveEdit() {
   errors.value = null
   if (!editedItem.name?.trim() || !editedItem.email?.trim()) {
     errors.value = 'Vui lòng nhập tên và email.'
-    
+
     return
+
   }
   if (!editedId.value) {
     errors.value = 'Missing user id'
-    
+
     return
+
   }
 
   saving.value = true
@@ -517,11 +555,11 @@ async function saveEdit() {
       await userStore.fetchUsers(Number(userStore.currentPage ?? 1))
       closeEditDialog()
     } else {
-      errors.value = userStore.error || 'Không thể cập nhật người dùng'
+      errors.value = userStore.error?.message || 'Không thể cập nhật người dùng'
     }
   } catch (e) {
     console.error('updateUser error', e)
-    errors.value = userStore.error || (e && e.message) || 'Lỗi khi cập nhật'
+    errors.value = userStore.error?.message || (e && e.message) || 'Lỗi khi cập nhật'
   } finally {
     saving.value = false
   }
@@ -530,7 +568,6 @@ async function saveEdit() {
 /* ------------------ delete dialog ------------------ */
 const deleteDialog = ref(false)
 const deleteId = ref(null)
-const deleting = ref(false)
 
 function confirmDeleteDialog(id) {
   deleteId.value = id
@@ -538,6 +575,7 @@ function confirmDeleteDialog(id) {
 }
 
 function closeDeleteDialog() {
+  if (deleting.value) return
   deleteDialog.value = false
   deleteId.value = null
 }

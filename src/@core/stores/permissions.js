@@ -17,6 +17,7 @@ export const usePermissionsStore = defineStore('permission', () => {
   const loading = ref(false)
   const keyWord = ref('')
 
+
   // pagination
   const currentPage = ref(1)
   const totalPages = ref(1)
@@ -33,6 +34,7 @@ export const usePermissionsStore = defineStore('permission', () => {
 
   // helpers
   const findPermissionIndex = id => permissions.value.findIndex(r => r._id === id || r.id === id)
+ 
 
   // logging helper
   const _log = {
@@ -81,10 +83,12 @@ export const usePermissionsStore = defineStore('permission', () => {
       } else {
         // resp could be { result, data, pagination }
         // try common fields first
-        permissions.value = resp?.result ?? resp?.data ?? resp ?? []
+        permissions.value = resp ?? []
+        console.log('permission', permissions.value)
         currentPage.value = resp?.pagination?.currentPage ?? page
         totalPages.value = resp?.pagination?.totalPages ?? 1
         totalItems.value = resp?.pagination?.totalItems ?? permissions.value.length
+
       }
 
       error.value = null

@@ -5,5 +5,6 @@ import forms from './forms'
 import others from './others'
 import uiElements from './ui-elements'
 import myhau from './myhau'
+import baocao from './baocao'
 
-export default [...dashboard, ...myhau, ...appsAndPages, ...uiElements, ...forms, ...charts, ...others]
+export default [...dashboard, ...myhau, ...baocao, ...appsAndPages, ...uiElements, ...forms, ...charts, ...others]

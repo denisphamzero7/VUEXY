@@ -10,6 +10,8 @@ declare global {
   const $newapi: typeof import('./src/utils/newapi.js')['$newapi']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']
   const EffectScope: typeof import('vue')['EffectScope']
+  const _: typeof import('./src/@core/utils/_log.js')['_']
+  const _log: typeof import('./src/@core/utils/_log.js')['_log']
   const _unwrapData: typeof import('./src/@core/utils/_uwrapData.js')['_unwrapData']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const alphaDashValidator: typeof import('./src/@core/utils/validators.js')['alphaDashValidator']

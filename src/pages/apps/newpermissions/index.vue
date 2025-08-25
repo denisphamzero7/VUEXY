@@ -7,6 +7,7 @@ const headers = [
   { title: 'Tên quyền', key: 'name' },
   { title: 'Phương pháp', key: 'method', sortable: false  },
   { title: 'Đường dẫn', key: 'apiPath', sortable: false },
+  { title: 'Thuộc quyền', key: 'assigned_roles', sortable: false },
   { title: 'Ngày tạo', key: 'createdAt', sortable: false },
   { title: 'Hành động', key: 'actions', sortable: false },
 ]
@@ -223,9 +224,22 @@ onMounted(() => {
               </VChip>
             </div>
           </template>
-           <template #item.apiPath="{ item }">
+          <template #item.apiPath="{ item }">
             <div class="text-high-emphasis text-body-1">
               {{ item.apiPath||'deos co' }}
+            </div>
+          </template>
+
+          <template #item.assigned_roles="{ item }">
+            <div class="d-flex gap-2 align-center">
+              <VBadge
+                v-for="(role) in item.assignedRoles.slice(0,3)"
+                :key="role.id"
+                :content="role.name"
+                color="primary"
+                inline
+                class="mb-1"
+              />
             </div>
           </template>
           <template #item.createdAt="{ item }">

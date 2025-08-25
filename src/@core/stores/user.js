@@ -74,6 +74,8 @@ export const useUserStore = defineStore('user', () => {
 
   // actions
   const fetchUsers = async (page = 1) => {
+    loading.value=true
+    
     // logging start
     const start = performance.now()
 

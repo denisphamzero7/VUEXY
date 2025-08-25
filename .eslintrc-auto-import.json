@@ -382,6 +382,8 @@
     "updateRole": true,
     "useMyApi": true,
     "uwrapData": true,
-    "_unwrapData": true
+    "_unwrapData": true,
+    "_": true,
+    "_log": true
   }
 }
