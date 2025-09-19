@@ -33,6 +33,8 @@ declare global {
   const createGenericProjection: typeof import('@vueuse/math')['createGenericProjection']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
+  const createM: typeof import('./src/composables/useMyApi.js')['createM']
+  const createMonitor: typeof import('./src/composables/useMyApi.js')['createMonitor']
   const createPermission: typeof import('./src/composables/useMyApi.js')['createPermission']
   const createPinia: typeof import('pinia')['createPinia']
   const createProjection: typeof import('@vueuse/math')['createProjection']
@@ -414,6 +416,7 @@ declare module 'vue' {
     readonly createGenericProjection: UnwrapRef<typeof import('@vueuse/math')['createGenericProjection']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
+    readonly createMonitor: UnwrapRef<typeof import('./src/composables/useMyApi.js')['createMonitor']>
     readonly createPermission: UnwrapRef<typeof import('./src/composables/useMyApi.js')['createPermission']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
     readonly createProjection: UnwrapRef<typeof import('@vueuse/math')['createProjection']>

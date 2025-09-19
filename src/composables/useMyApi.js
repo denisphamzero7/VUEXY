@@ -44,6 +44,10 @@ export const createPermission = data => api.post("/permissions", data)
 export const updatePermission = (id, data) => api.patch(`/permissions/${id}`, data)
 export const deletePermission = id => api.delete(`/permissions/${id}`)
 
+
+// monitor
+export const createMonitor = data => api.post("/monitorlogs", data)
+
 // auth
 export const login = credentials => api.post("/auth/login", credentials)
 export const register = credentials => api.post("/auth/register", credentials)

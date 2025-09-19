@@ -384,6 +384,8 @@
     "uwrapData": true,
     "_unwrapData": true,
     "_": true,
-    "_log": true
+    "_log": true,
+    "createM": true,
+    "createMonitor": true
   }
 }
