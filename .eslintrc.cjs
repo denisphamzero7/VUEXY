@@ -39,7 +39,7 @@ module.exports = {
       singleline: 'beside',
       multiline: 'below',
     }],
-
+  
 
     // indentation (Already present in TypeScript)
     'indent': ['error', 2],
@@ -51,7 +51,9 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
 
     // Enforce camelCase naming convention
-    'camelcase': 'error',
+    'camelcase': 'off',
+
+    '@typescript-eslint/camelcase':'off',
 
     // Disable max-len
     'max-len': 'off',

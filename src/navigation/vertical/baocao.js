@@ -15,6 +15,27 @@ export default [
         to: { name: 'apps-form-templates-list-target', params: { target: 'all' } },
         skipPermission: true,
       },
+      {
+        title: 'Đợt báo cáo',
+        icon: { icon: 'tabler-template' },
+        navActiveLink: 'apps-report-batches-list-target',
+        to: { name: 'apps-report-batches-list-target', params: { target: 'all' } },
+        skipPermission: true,
+      },
+
+      {
+        title: 'danh sách báo cáo',
+        icon: { icon: 'tabler-template' },
+        navActiveLink: 'apps-report-submssions-target',
+        to: { name: 'apps-report-submssions-target', params: { target: 'all' } },
+        skipPermission: true,
+      },
+      {
+        title: 'danh sách báo cáo',
+        icon: { icon: 'tabler-template' },
+        skipPermission: true,
+        
+      },
     ],
   },
 ]

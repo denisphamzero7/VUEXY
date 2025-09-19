@@ -1,21 +1,28 @@
 <script setup>
+import ReportBatchStatistics from '@/views/apps/report-batches/list/ReportBatchStatistics.vue'
+import ReportBatchFilter from '@/views/apps/report-batches/list/ReportBatchFilter.vue'
+import ReportBatchTable from '@/views/apps/report-batches/list/ReportBatchTable.vue'
 import { useRoute, useRouter } from "vue-router"
-import { onMounted, ref, watch, computed, reactive } from "vue"
-import FormTemplateSatistics from '@/views/apps/form-templates/list/FormTemplateSatistics.vue'
-import FormTemplateFilter from "@/views/apps/form-templates/list/FormTemplateFilter.vue"
-import FormTemplateTable from "@/views/apps/form-templates/list/FormTemplateTable.vue"
 
 definePage({
   meta: {
     skipPermission: true,
 
     // action: 'access',
-    // subject: 'form_templates',
+    // subject: 'report_batches',
   },
-
 })
 
-// filters mặc định: không lọc gì cả
+const router = useRouter()
+
+const route = useRoute()
+
+const target = computed(() => route.params.target)
+
+watch(target, newTarget => {
+  filters.value.status = newTarget && newTarget !== "all" ? newTarget : null
+})
+
 const filters = reactive({
   name: "",
   period_range: null,
@@ -24,28 +31,8 @@ const filters = reactive({
   // thêm các trường khác nếu FormTemplateFilter dùng
 })
 
-const router = useRouter()
-
-const route = useRoute()
-const target = computed(()=> route.params.target)
-
-watch(target, newTarget => {
-  filters.value.status = newTarget && newTarget !== "all" ? newTarget : null
-})
-
-const isExportDialogVisible = ref(false)
-
-const selectedTemplates = ref([])
-
-const exportApi = async payload => {
-
-  // ví dụ: console.log('export', payload)
-  return { success: true }
-}
-
 const onReset = () => {
   filters.name = ""
-  // eslint-disable-next-line camelcase
   filters.period_range = null
   filters.status = null
 }
@@ -71,19 +58,18 @@ const statistics = computed(() =>  formstatics)
 
 <template>
   <section>
-    <FormTemplateSatistics :statistics="statistics" />
-    <VCard class="mt-6">
-      <FormTemplateFilter
+    <ReportBatchStatistics :statistics="statistics" />
+    <VCard>
+      <ReportBatchFilter 
         v-model:filters="filters"
         :is-export-dialog-visible="isExportDialogVisible"
         :export-api="exportApi"
         :selected-templates="selectedTemplates"
         @reset="onReset"
         @add-template="onAddTemplate"
-        @bulk-action="onBulkAction"
-      />
-      <VDivider />
-      <FormTemplateTable />
+        @bulk-action="onBulkAction"/>
+        
+      <ReportBatchTable />
     </VCard>
   </section>
 </template>

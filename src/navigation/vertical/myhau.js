@@ -6,7 +6,7 @@ export default [
     title: 'MyHau',
     icon: { icon: 'tabler-chart-donut-2' },
     children: [
-        
+     
       { title: 'Sơ yếu lí lịch', to: 'pages-my-profile', params: { tab: 'profile' } },
       { title: 'Cài đặt tài khoản người dùng', to: { name: 'pages-account-new-settings-tab', params: { tab: 'newaccount' } } },
       { title: 'Định giá mới', to: 'pages-pricingnew' },
@@ -17,6 +17,14 @@ export default [
         children: [
           { title: 'Danh sách người dùng', to: 'pages-user-list' },
           { title: 'Thêm người dùng', to: 'pages-user-adduser' },
+          
+          // { title: 'chi tiết người dùng', to: 'pages-user-detailuser-id' },
+        ],
+      },
+      { title: 'Báo cáo giám sát',
+        icon: { icon: 'tabler-user' },
+        children: [
+          { title: 'Thêm báo cáo giám sát', to: 'pages-monitor-form-monitor' },
           
           // { title: 'chi tiết người dùng', to: 'pages-user-detailuser-id' },
         ],
